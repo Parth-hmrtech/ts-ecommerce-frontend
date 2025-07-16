@@ -16,6 +16,7 @@ import {
   IconButton,
   Alert,
   FormHelperText,
+  Container,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -119,115 +120,116 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <Box
-      minHeight="100vh"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      px={2}
-    >
-      <Box
-        component="img"
-        src={ecommerceLogo}
-        alt="Ecommerce Logo"
-        sx={{ height: 60, cursor: 'pointer', mb: 4 }}
-        onClick={() => navigate('/')}
-      />
-
-      <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 400 }}>
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={2}>
-            <Typography variant="h5" gutterBottom>
-              Sign In
+    <Container maxWidth="sm">
+      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center">
+        <Paper elevation={4} sx={{ p: 4, borderRadius: 4, width: '100%' }}>
+          <Box textAlign="center" mb={3}>
+            <Box
+              component="img"
+              src={ecommerceLogo}
+              alt="Ecommerce Logo"
+              sx={{ height: 60, mb: 1, cursor: 'pointer' }}
+              onClick={() => navigate('/')}
+            />
+            <Typography variant="h4" fontWeight="bold">
+              Welcome Back
             </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Please sign in to your account
+            </Typography>
+          </Box>
 
-            {error && <Alert severity="error">{error}</Alert>}
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={3}>
+              {error && <Alert severity="error">{error}</Alert>}
 
-            <TextField
-              fullWidth
-              type="email"
-              label="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              error={!!fieldErrors.email}
-              helperText={fieldErrors.email}
-            />
-
-            <TextField
-              fullWidth
-              label="Password"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              value={formData.password}
-              onChange={handleChange}
-              error={!!fieldErrors.password}
-              helperText={fieldErrors.password}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      edge="end"
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <FormControl fullWidth error={!!fieldErrors.role}>
-              <InputLabel>Role</InputLabel>
-              <Select
-                name="role"
-                value={formData.role}
+              <TextField
+                fullWidth
+                type="email"
+                label="Email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
-                label="Role"
-              >
-                <MenuItem value="buyer">Buyer</MenuItem>
-                <MenuItem value="seller">Seller</MenuItem>
-              </Select>
-              {fieldErrors.role && (
-                <FormHelperText>{fieldErrors.role}</FormHelperText>
-              )}
-            </FormControl>
+                error={!!fieldErrors.email}
+                helperText={fieldErrors.email}
+              />
 
-            <Box textAlign="right">
+              <TextField
+                fullWidth
+                label="Password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={handleChange}
+                error={!!fieldErrors.password}
+                helperText={fieldErrors.password}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        edge="end"
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <FormControl fullWidth error={!!fieldErrors.role}>
+                <InputLabel>Role</InputLabel>
+                <Select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  label="Role"
+                >
+                  <MenuItem value="buyer">Buyer</MenuItem>
+                  <MenuItem value="seller">Seller</MenuItem>
+                </Select>
+                {fieldErrors.role && (
+                  <FormHelperText>{fieldErrors.role}</FormHelperText>
+                )}
+              </FormControl>
+
+              <Box textAlign="right">
+                <Button
+                  variant="text"
+                  onClick={() => navigate('/forgot-password')}
+                  sx={{ textTransform: 'none', p: 0, minWidth: 'auto', fontSize: '0.875rem' }}
+                >
+                  Forgot password?
+                </Button>
+              </Box>
+
               <Button
-                variant="text"
-                onClick={() => navigate('/forgot-password')}
-                sx={{ textTransform: 'none', p: 0, minWidth: 'auto', fontSize: '0.875rem' }}
+                variant="contained"
+                fullWidth
+                type="submit"
+                size="large"
+                sx={{ py: 1.5, borderRadius: 2 }}
+                disabled={!!loading}
+                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : undefined}
               >
-                Forgot password?
+                {loading ? 'Logging in...' : 'Login'}
               </Button>
-            </Box>
+            </Stack>
+          </form>
 
+          <Typography variant="body2" align="center" mt={3}>
+            Don’t have an account yet?{' '}
             <Button
-              variant="contained"
-              fullWidth
-              type="submit"
-              disabled={!!loading}
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : undefined}
+              variant="text"
+              onClick={() => navigate('/signup')}
+              sx={{ textTransform: 'none', p: 0, minWidth: 'auto', fontSize: '0.875rem' }}
             >
-              {loading ? 'Logging in...' : 'Login'}
+              Sign Up
             </Button>
-          </Stack>
-        </form>
-
-        <Typography variant="body2" align="center" mt={2}>
-          Don’t have an account yet?{' '}
-          <Button
-            variant="text"
-            onClick={() => navigate('/signup')}
-            sx={{ textTransform: 'none', p: 0, minWidth: 'auto', fontSize: '0.875rem' }}
-          >
-            Sign Up
-          </Button>
-        </Typography>
-      </Paper>
-    </Box>
+          </Typography>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 

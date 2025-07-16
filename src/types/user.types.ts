@@ -1,4 +1,3 @@
-// src/types/auth.types.ts
 
 export interface ISignUpInput {
   name: string;
@@ -6,7 +5,7 @@ export interface ISignUpInput {
   password: string;
   confirmPassword: string;
   role: 'buyer' | 'seller';
-  profileImage?: File | string; // optional profile picture
+  profileImage?: File | string; 
 }
 
 export interface ISignInInput {

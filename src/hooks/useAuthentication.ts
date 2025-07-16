@@ -1,25 +1,33 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '@/store/index';
+import type { AppDispatch, RootState } from '@/store';
 import {
   signUpUserAction,
   signInUserAction,
   forgotPasswordAction,
-} from "@/store/actions/auth.actions";
+} from '@/store/actions/auth.actions';
 
-import { resetAuthState } from "@/store/reducers/auth.reducer";
-import type { IUser } from "@/types/user.types";
+import { resetAuthState } from '@/store/reducers/auth.reducer';
+import type { IUser } from '@/types/user.types';
+
+interface IForgotPasswordInput {
+  email: string;
+  role: 'buyer' | 'seller';
+}
+
 const useAuthentication = () => {
+  const dispatch: AppDispatch = useDispatch();
+
   const {
     user,
     loading,
     error,
     success,
     message,
+    apiName,
+    alertType,
   } = useSelector((state: RootState) => state.auth);
-
-  const dispatch: AppDispatch = useDispatch();
 
   const signUp = async (body: FormData) => {
     return await dispatch(signUpUserAction(body));
@@ -29,7 +37,7 @@ const useAuthentication = () => {
     return await dispatch(signInUserAction(body));
   };
 
-  const forgotPassword = async (body: { email: string; role: string }) => {
+  const forgotPassword = async (body: IForgotPasswordInput) => {
     return await dispatch(forgotPasswordAction(body));
   };
 
@@ -37,11 +45,12 @@ const useAuthentication = () => {
     dispatch(resetAuthState());
   };
 
+  // Clean up auth state on unmount (optional but nice to have)
   useEffect(() => {
     return () => {
       resetAuth();
     };
-  }, [dispatch]);
+  }, []);
 
   return {
     user,
@@ -49,6 +58,8 @@ const useAuthentication = () => {
     error,
     success,
     message,
+    apiName,
+    alertType,
     signUp,
     signIn,
     forgotPassword,

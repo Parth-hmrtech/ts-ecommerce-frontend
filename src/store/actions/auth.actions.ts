@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
 import type { IUser } from '@/types/user.types';
+import { reactHooksModule } from '@reduxjs/toolkit/query/react';
 
 export const signUpUserAction = createAsyncThunk<
   APISuccessResponse,     
@@ -53,6 +54,9 @@ export const forgotPasswordAction = createAsyncThunk<
   APISuccessResponse,          
   ForgotPasswordPayload        
 >('auth/forgotPassword', async ({ email, role }: ForgotPasswordPayload, thunkAPI) => {
+  console.log(email);
+  console.log(role);
+  
   try {
     const response = await apiRequest({
       method: 'POST',
@@ -60,6 +64,8 @@ export const forgotPasswordAction = createAsyncThunk<
       data: { email, role },
     });
 
+    console.log(response.data);
+    
     return thunkAPI.fulfillWithValue(response.data);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(

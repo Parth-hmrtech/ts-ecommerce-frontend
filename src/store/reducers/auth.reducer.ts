@@ -54,15 +54,17 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Sign Up
+    // --- Sign Up ---
     builder.addCase(signUpUserAction.pending, (state) => {
       state.apiName = 'auth/signUp';
       state.loading = 'auth/signUp';
       state.success = false;
+      state.error = false;
     });
     builder.addCase(signUpUserAction.fulfilled, (state, { payload }: any) => {
       state.loading = '';
       state.success = true;
+      state.error = false;
       state.alertType = 'success';
       state.message = payload.message;
       state.user = payload.data.user;
@@ -70,17 +72,22 @@ const authSlice = createSlice({
     builder.addCase(signUpUserAction.rejected, (state, { payload }: any) => {
       state.loading = '';
       state.success = false;
+      state.error = true;
       state.alertType = 'error';
       state.message = payload?.message || 'Something went wrong';
     });
 
-    // Sign In
+    // --- Sign In ---
     builder.addCase(signInUserAction.pending, (state) => {
       state.apiName = 'auth/signIn';
       state.loading = 'auth/signIn';
+      state.success = false;
+      state.error = false;
     });
     builder.addCase(signInUserAction.fulfilled, (state, { payload }: any) => {
       state.loading = '';
+      state.success = true;
+      state.error = false;
       state.alertType = 'success';
       state.message = payload.message;
       state.user = payload.data.user;
@@ -89,27 +96,40 @@ const authSlice = createSlice({
     });
     builder.addCase(signInUserAction.rejected, (state, { payload }: any) => {
       state.loading = '';
+      state.success = false;
+      state.error = true;
       state.alertType = 'error';
       state.message = payload?.message || 'Something went wrong';
     });
 
-    // Forgot Password
+    // --- Forgot Password ---
     builder.addCase(forgotPasswordAction.pending, (state) => {
       state.apiName = 'auth/forgotPassword';
       state.loading = 'auth/forgotPassword';
+      state.success = false;
+      state.error = false;
     });
     builder.addCase(forgotPasswordAction.fulfilled, (state, { payload }: any) => {
       state.loading = '';
+      state.success = true;
+      state.error = false;
       state.alertType = 'success';
       state.message = payload.message;
     });
     builder.addCase(forgotPasswordAction.rejected, (state, { payload }: any) => {
       state.loading = '';
+      state.success = false;
+      state.error = true;
       state.alertType = 'error';
       state.message = payload?.message || 'Something went wrong';
     });
   },
 });
 
-export const { clearAuthMessage, setAuthError, resetAuthState } = authSlice.actions;
+export const {
+  clearAuthMessage,
+  setAuthError,
+  resetAuthState,
+} = authSlice.actions;
+
 export default authSlice.reducer;

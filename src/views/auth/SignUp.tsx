@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import {
+  Avatar,
   Box,
-  TextField,
   Button,
+  Container,
   Typography,
+  TextField,
   FormControl,
   InputLabel,
   Select,
@@ -18,7 +20,7 @@ import {
   FormHelperText,
   InputAdornment,
 } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff, UploadFile } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import useAuthentication from '@/hooks/useAuthentication';
 
@@ -147,145 +149,153 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <Box minHeight="100vh" display="flex" justifyContent="center" alignItems="center"  px={2}>
-      <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 500 }}>
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
-          <Typography variant="h5" gutterBottom>Sign Up</Typography>
+    <Container maxWidth="sm">
+      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center">
+        <Paper elevation={4} sx={{ p: 4, borderRadius: 4, width: '100%' }}>
+          <form onSubmit={handleSubmit} encType="multipart/form-data">
+            <Typography variant="h4" textAlign="center" fontWeight="bold" mb={3}>
+              Create Account
+            </Typography>
 
-          <Stack spacing={2}>
-            {error && <Alert severity="error">{error}</Alert>}
+            <Stack spacing={3}>
+              {error && <Alert severity="error">{error}</Alert>}
 
-            <FormControl error={!!errors.image_url}>
-              <Button variant="outlined" component="label">
-                Upload Profile Image
-                <input type="file" accept="image/*" hidden onChange={handleImageChange} />
-              </Button>
-              {formData.image_url && (
-                <Typography variant="body2" mt={1}>Selected: {formData.image_url}</Typography>
-              )}
-              {errors.image_url && <FormHelperText>{errors.image_url}</FormHelperText>}
-            </FormControl>
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Avatar
+                  src={imageFile ? URL.createObjectURL(imageFile) : ''}
+                  alt="Profile"
+                  sx={{ width: 56, height: 56 }}
+                />
+                <Button
+                  component="label"
+                  variant="outlined"
+                  startIcon={<UploadFile />}
+                >
+                  Upload Image
+                  <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+                </Button>
+              </Stack>
+              {errors.image_url && <FormHelperText error>{errors.image_url}</FormHelperText>}
 
-            <TextField
-              label="First Name"
-              name="first_name"
-              value={formData.first_name}
-              onChange={handleInputChange}
-              fullWidth
-              error={!!errors.first_name}
-              helperText={errors.first_name}
-            />
+              <TextField
+                label="First Name"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleInputChange}
+                error={!!errors.first_name}
+                helperText={errors.first_name}
+                fullWidth
+              />
 
-            <TextField
-              label="Last Name"
-              name="last_name"
-              value={formData.last_name}
-              onChange={handleInputChange}
-              fullWidth
-              error={!!errors.last_name}
-              helperText={errors.last_name}
-            />
+              <TextField
+                label="Last Name"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleInputChange}
+                error={!!errors.last_name}
+                helperText={errors.last_name}
+                fullWidth
+              />
 
-            <TextField
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              fullWidth
-              error={!!errors.email}
-              helperText={errors.email}
-            />
+              <TextField
+                label="Email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                error={!!errors.email}
+                helperText={errors.email}
+                fullWidth
+              />
 
-            <TextField
-              label="Phone Number"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={handleInputChange}
-              fullWidth
-              error={!!errors.phone_number}
-              helperText={errors.phone_number}
-            />
+              <TextField
+                label="Phone Number"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleInputChange}
+                error={!!errors.phone_number}
+                helperText={errors.phone_number}
+                fullWidth
+              />
 
-            <TextField
-              label="Password"
-              name="password_hash"
-              type={showPassword ? 'text' : 'password'}
-              value={formData.password_hash}
-              onChange={handleInputChange}
-              fullWidth
-              error={!!errors.password_hash}
-              helperText={errors.password_hash}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+              <TextField
+                label="Password"
+                name="password_hash"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password_hash}
+                onChange={handleInputChange}
+                error={!!errors.password_hash}
+                helperText={errors.password_hash}
+                fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-            <TextField
-              label="Confirm Password"
-              name="confirm_password"
-              type={showConfirm ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={handleInputChange}
-              fullWidth
-              error={!!errors.confirm_password}
-              helperText={errors.confirm_password}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowConfirm(!showConfirm)} edge="end" size="small">
-                      {showConfirm ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+              <TextField
+                label="Confirm Password"
+                name="confirm_password"
+                type={showConfirm ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={handleInputChange}
+                error={!!errors.confirm_password}
+                helperText={errors.confirm_password}
+                fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowConfirm(!showConfirm)} edge="end">
+                        {showConfirm ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-            <FormControl fullWidth error={!!errors.role}>
-              <InputLabel id="role-label">Role</InputLabel>
-              <Select
-                labelId="role-label"
-                name="role"
-                value={formData.role}
-                onChange={handleSelectChange}
-                label="Role"
+              <FormControl fullWidth error={!!errors.role}>
+                <InputLabel>Role</InputLabel>
+                <Select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleSelectChange}
+                  label="Role"
+                >
+                  <MenuItem value="buyer">Buyer</MenuItem>
+                  <MenuItem value="seller">Seller</MenuItem>
+                </Select>
+                {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
+              </FormControl>
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                fullWidth
+                sx={{ py: 1.5, borderRadius: 2 }}
+                disabled={!!loading}
+                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : undefined}
               >
-                <MenuItem value="buyer">Buyer</MenuItem>
-                <MenuItem value="seller">Seller</MenuItem>
-              </Select>
-              {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
-            </FormControl>
+                {loading ? 'Signing Up...' : 'Sign Up'}
+              </Button>
 
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              disabled={!!loading}
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : undefined}
-            >
-              {loading ? 'Signing Up...' : 'Sign Up'}
-            </Button>
-          </Stack>
-        </form>
-
-        <Typography variant="body2" align="center" mt={2}>
-          Already have an account?{' '}
-          <Button
-            variant="text"
-            onClick={() => navigate('/signin')}
-            sx={{ textTransform: 'none', p: 0 }}
-          >
-            Sign in
-          </Button>
-        </Typography>
-      </Paper>
-    </Box>
+              <Typography variant="body2" textAlign="center">
+                Already have an account?{' '}
+                <Button variant="text" onClick={() => navigate('/signin')}>
+                  Sign In
+                </Button>
+              </Typography>
+            </Stack>
+          </form>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 
