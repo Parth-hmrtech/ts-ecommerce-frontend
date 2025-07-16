@@ -5,7 +5,7 @@ import authReducer from '@/store/reducers/auth.reducer';
 // import categoryReducer from '@/store/reducers/category.reducer';
 // import orderReducer from '@/store/reducers/order.reducer';
 // import paymentReducer from '@/store/reducers/payment.reducer';
-// import productReducer from '@/store/reducers/product.reducer';
+import productReducer from '@/store/reducers/product.reducer';
 // import reviewReducer from '@/store/reducers/review.reducer';
 // import userReducer from '@/store/reducers/user.reducer';
 
@@ -16,7 +16,7 @@ const store = configureStore({
     // category: categoryReducer,
     // order: orderReducer,
     // payment: paymentReducer,
-    // product: productReducer,
+    product: productReducer,
     // review: reviewReducer,
     // user: userReducer,
   },

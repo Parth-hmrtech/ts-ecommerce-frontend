@@ -3,10 +3,9 @@ import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
 import type { IUser } from '@/types/user.types';
 
-// Sign Up Action (FormData type because of file uploads)
 export const signUpUserAction = createAsyncThunk<
-  APISuccessResponse,       // Return type
-  FormData                  // Argument type
+  APISuccessResponse,     
+  FormData                
 >('auth/signUpUser', async (formData: FormData, thunkAPI) => {
   try {
     const response = await apiRequest({
@@ -26,10 +25,9 @@ export const signUpUserAction = createAsyncThunk<
   }
 });
 
-// Sign In Action (with IUser type)
 export const signInUserAction = createAsyncThunk<
-  APISuccessResponse,      // Return type
-  IUser                    // Argument type
+  APISuccessResponse,  
+  IUser                
 >('auth/signInUser', async (credentials: IUser, thunkAPI) => {
   try {
     const response = await apiRequest({
@@ -46,15 +44,14 @@ export const signInUserAction = createAsyncThunk<
   }
 });
 
-// Forgot Password Action (custom payload type)
 interface ForgotPasswordPayload {
   email: string;
   role: string;
 }
 
 export const forgotPasswordAction = createAsyncThunk<
-  APISuccessResponse,            // Return type
-  ForgotPasswordPayload          // Argument type
+  APISuccessResponse,          
+  ForgotPasswordPayload        
 >('auth/forgotPassword', async ({ email, role }: ForgotPasswordPayload, thunkAPI) => {
   try {
     const response = await apiRequest({
