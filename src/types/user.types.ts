@@ -22,7 +22,7 @@ export interface IForgotPasswordInput {
 export interface IUser {
   email: string;
   password: string;
-  full_name?: string;           // Optional during sign in
-  avatar?: File | string;       // Optional: string after upload, File during signup
-  role?: 'buyer' | 'seller';    // Optional if defaulted on backend
+  full_name?: string;          
+  avatar?: File | string;       
+  role?: 'buyer' | 'seller';
 }
