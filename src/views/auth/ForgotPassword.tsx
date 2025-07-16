@@ -67,14 +67,12 @@ const ForgotPassword: React.FC = () => {
     setEmail(e.target.value);
   };
 
-  // Reset auth state on unmount
   useEffect(() => {
     return () => {
       resetAuth();
     };
   }, [resetAuth]);
 
-  // Redirect on success
   useEffect(() => {
       console.log("sucess",success);
 

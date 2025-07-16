@@ -54,7 +54,6 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // --- Sign Up ---
     builder.addCase(signUpUserAction.pending, (state) => {
       state.apiName = 'auth/signUp';
       state.loading = 'auth/signUp';
@@ -77,7 +76,6 @@ const authSlice = createSlice({
       state.message = payload?.message || 'Something went wrong';
     });
 
-    // --- Sign In ---
     builder.addCase(signInUserAction.pending, (state) => {
       state.apiName = 'auth/signIn';
       state.loading = 'auth/signIn';
@@ -102,7 +100,6 @@ const authSlice = createSlice({
       state.message = payload?.message || 'Something went wrong';
     });
 
-    // --- Forgot Password ---
     builder.addCase(forgotPasswordAction.pending, (state) => {
       state.apiName = 'auth/forgotPassword';
       state.loading = 'auth/forgotPassword';
