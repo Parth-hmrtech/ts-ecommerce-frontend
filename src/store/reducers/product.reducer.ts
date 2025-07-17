@@ -58,23 +58,21 @@ const productSlice = createSlice({
       .addCase(fetchProductsAction.pending, (state) => {
         state.apiName = 'buyer/fetchProducts';
         state.loading = 'buyer/fetchProducts';
-        state.alertType = '';
-        state.message = '';
       })
       .addCase(fetchProductsAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.products = payload || [];
+        state.products = payload;
         state.alertType = 'success';
-        state.message = 'Buyer products fetched successfully';
+        state.message = payload.message;
       })
       .addCase(fetchProductsAction.rejected, (state, { payload }: any) => {
         state.loading = '';
-        state.products = [];
         state.alertType = 'error';
-        if (payload) state.message = payload.message || 'Failed to fetch buyer products';
+        if (payload) {
+          state.message = payload.message;
+        }
       })
 
-      // fetchBuyerProductByIdAction
       .addCase(fetchBuyerProductByIdAction.pending, (state) => {
         state.apiName = 'buyer/fetchProductById';
         state.loading = 'buyer/fetchProductById';
@@ -83,15 +81,16 @@ const productSlice = createSlice({
         state.loading = '';
         state.productDetail = payload;
         state.alertType = 'success';
-        state.message = 'Product detail loaded';
+        state.message = payload.message;
       })
       .addCase(fetchBuyerProductByIdAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        if (payload) state.message = payload || 'Failed to fetch product detail';
+        if (payload) {
+          state.message = payload.message;
+        }
       })
 
-      // fetchAllProductsAction
       .addCase(fetchAllProductsAction.pending, (state) => {
         state.apiName = 'seller/fetchProducts';
         state.loading = 'seller/fetchProducts';
@@ -100,32 +99,34 @@ const productSlice = createSlice({
         state.loading = '';
         state.products = payload;
         state.alertType = 'success';
-        state.message = 'Seller products fetched';
+        state.message = payload.message;
       })
       .addCase(fetchAllProductsAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        if (payload) state.message = payload || 'Failed to fetch seller products';
+        if (payload) {
+          state.message = payload.message;
+        }
       })
 
-      // addProductAction
       .addCase(addProductAction.pending, (state) => {
         state.apiName = 'seller/addProduct';
         state.loading = 'seller/addProduct';
       })
       .addCase(addProductAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.products.push(payload);
+        state.products.push(payload.data);
         state.alertType = 'success';
-        state.message = 'Product added successfully';
+        state.message = payload.message;
       })
       .addCase(addProductAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        if (payload) state.message = payload || 'Failed to add product';
+        if (payload) {
+          state.message = payload.message;
+        }
       })
 
-      // updateProductAction
       .addCase(updateProductAction.pending, (state) => {
         state.apiName = 'seller/updateProduct';
         state.loading = 'seller/updateProduct';
@@ -133,103 +134,113 @@ const productSlice = createSlice({
       .addCase(updateProductAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
         state.products = state.products.map((p) =>
-          p._id === payload._id ? payload : p
+          p._id === payload.data._id ? payload.data : p
         );
         state.alertType = 'success';
-        state.message = 'Product updated successfully';
+        state.message = payload.message;
       })
       .addCase(updateProductAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        if (payload) state.message = payload || 'Failed to update product';
+        if (payload) {
+          state.message = payload.message;
+        }
       })
 
-      // deleteProductAction
       .addCase(deleteProductAction.pending, (state) => {
         state.apiName = 'seller/deleteProduct';
         state.loading = 'seller/deleteProduct';
       })
       .addCase(deleteProductAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.products = state.products.filter((p) => p._id !== payload);
+        state.products = state.products.filter((p) => p._id !== payload.data);
         state.alertType = 'success';
-        state.message = 'Product deleted successfully';
+        state.message = payload.message;
       })
       .addCase(deleteProductAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        if (payload) state.message = payload || 'Failed to delete product';
+        if (payload) {
+          state.message = payload.message;
+        }
       })
 
-      // uploadProductImageAction
       .addCase(uploadProductImageAction.pending, (state) => {
         state.apiName = 'seller/uploadProductImage';
         state.loading = 'seller/uploadProductImage';
       })
       .addCase(uploadProductImageAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.uploadedImage = payload;
+        state.uploadedImage = payload.data;
         state.alertType = 'success';
-        state.message = 'Image uploaded';
+        state.message = payload.message;
       })
       .addCase(uploadProductImageAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        if (payload) state.message = payload || 'Image upload failed';
+        if (payload) {
+          state.message = payload.message;
+        }
       })
 
-      // fetchBuyerWishlistAction
       .addCase(fetchBuyerWishlistAction.pending, (state) => {
         state.apiName = 'buyer/fetchWishlist';
         state.loading = 'buyer/fetchWishlist';
       })
       .addCase(fetchBuyerWishlistAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.buyerWishlist = payload || [];
+        state.buyerWishlist = payload.data || [];
         state.alertType = 'success';
-        state.message = 'Wishlist fetched';
+        state.message = payload.message;
       })
       .addCase(fetchBuyerWishlistAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        if (payload) state.message = payload || 'Failed to fetch wishlist';
+        if (payload) {
+          state.message = payload.message;
+        }
       })
 
-      // addToBuyerWishlistAction
+
       .addCase(addToBuyerWishlistAction.pending, (state) => {
         state.apiName = 'buyer/addToWishlist';
         state.loading = 'buyer/addToWishlist';
       })
       .addCase(addToBuyerWishlistAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        const exists = state.buyerWishlist.some((item) => item._id === payload._id);
+        const exists = state.buyerWishlist.some((item) => item._id === payload.data._id);
         if (!exists) {
-          state.buyerWishlist.push(payload);
+          state.buyerWishlist.push(payload.data);
         }
         state.alertType = 'success';
-        state.message = 'Added to wishlist';
+        state.message = payload.message;
       })
       .addCase(addToBuyerWishlistAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        if (payload) state.message = payload || 'Failed to add to wishlist';
+        if (payload) {
+          state.message = payload.message;
+        }
       })
 
-      // deleteFromBuyerWishlistAction
       .addCase(deleteFromBuyerWishlistAction.pending, (state) => {
         state.apiName = 'buyer/deleteFromWishlist';
         state.loading = 'buyer/deleteFromWishlist';
       })
-      .addCase(deleteFromBuyerWishlistAction.fulfilled, (state, { payload }: any) => {
+        .addCase(deleteFromBuyerWishlistAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.buyerWishlist = state.buyerWishlist.filter((item) => item._id !== payload);
+        state.buyerWishlist = state.buyerWishlist.filter(
+          (item) => item._id !== payload.data
+        );
         state.alertType = 'success';
-        state.message = 'Removed from wishlist';
+        state.message = payload.message;
       })
       .addCase(deleteFromBuyerWishlistAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        if (payload) state.message = payload || 'Failed to remove from wishlist';
+        if (payload) {
+          state.message = payload.message;
+        }
       });
   },
 });

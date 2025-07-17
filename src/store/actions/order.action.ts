@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IOrder } from '@/types/order.types';
+import type { IOrder, IOrderPayload } from '@/types/order.types';
 
 const getTokenHeader = () => {
   const token = localStorage.getItem('access_token');
@@ -10,7 +10,7 @@ const getTokenHeader = () => {
   };
 };
 
-const placeBuyerOrderAction = createAsyncThunk<APISuccessResponse, IOrder>(
+const placeBuyerOrderAction = createAsyncThunk<APISuccessResponse, IOrderPayload>(
   'buyerOrder/placeBuyerOrder',
   async ({ products, delivery_address }, thunkAPI) => {
     try {
@@ -78,7 +78,7 @@ const updateBuyerOrderAddressAction = createAsyncThunk<APISuccessResponse, IOrde
   }
 );
 
-const deleteBuyerOrderAction = createAsyncThunk<APISuccessResponse, IOrder>(
+const deleteBuyerOrderAction = createAsyncThunk<APISuccessResponse, string>(
   'buyerOrder/deleteBuyerOrder',
   async (orderId, thunkAPI) => {
     try {
@@ -89,10 +89,13 @@ const deleteBuyerOrderAction = createAsyncThunk<APISuccessResponse, IOrder>(
       });
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(new Error(error?.response?.data?.message || 'Something is wrong here'));
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something went wrong while deleting the order')
+      );
     }
   }
 );
+
 
 const fetchSellerOrdersAction = createAsyncThunk<APISuccessResponse, void>(
   'orders/fetchAll',

@@ -59,7 +59,7 @@ const updateBuyerCartAction = createAsyncThunk<
         url: `${BASE_ENDPOINT}/${id}`,
         headers: getAuthHeaders(),
         data: { quantity },
-      });
+      });      
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(new Error(error?.response?.data?.message || 'Something is wrong here'));
@@ -86,7 +86,7 @@ const deleteBuyerCartAction = createAsyncThunk<
   }
 );
 
-const deleteAllBuyerCartByBuyerIdAction = createAsyncThunk<
+const deleteBuyerIdCartAction = createAsyncThunk<
   APISuccessResponse,
   string
 >(
@@ -110,5 +110,5 @@ export {
   addToBuyerCartAction,
   updateBuyerCartAction,
   deleteBuyerCartAction,
-  deleteAllBuyerCartByBuyerIdAction,
+  deleteBuyerIdCartAction,
 };

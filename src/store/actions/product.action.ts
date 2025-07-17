@@ -10,14 +10,17 @@ const getAuthHeaders = () => {
   };
 };
 
-const fetchProductsAction = createAsyncThunk<APISuccessResponse, IProduct>(
+const fetchProductsAction = createAsyncThunk<APISuccessResponse, void>(
   'products/fetchProducts',
+
   async (_, thunkAPI) => {
     try {
+      
       const response = await apiRequest({
         method: 'GET',
         url: '/buyer/products',
       });
+      
       return thunkAPI.fulfillWithValue(response?.data?.data || []);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(

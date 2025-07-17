@@ -15,9 +15,12 @@ import { useNavigate } from 'react-router-dom';
 
 import BuyerHeader from '@/components/common/BuyerHeader';
 import BuyerFooter from '@/components/common/BuyerFooter';
-import useBuyerDashboard from '@/hooks/useBuyerDashboard'; 
+import useBuyerDashboard from '@/hooks/useBuyerDashboard';
 
-const BuyerDashboard = () => {
+import type { ICartItem } from '@/types/cart.types';
+import type { IProduct } from '@/types/product.types';
+
+const BuyerDashboard: React.FC = () => {
   const navigate = useNavigate();
   const {
     products,
@@ -30,60 +33,56 @@ const BuyerDashboard = () => {
     refreshCart,
   } = useBuyerDashboard();
 
-    
-  const [quantities, setQuantities] = useState({});
-  const [search, setSearch] = useState('');
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [search, setSearch] = useState<string>('');
 
   useEffect(() => {
-    const qtyMap = {};
-    cart.forEach((item) => {
+    const qtyMap: Record<string, number> = {};
+    cart.forEach((item: ICartItem) => {
       qtyMap[item.product_id] = item.quantity;
     });
+
     setQuantities(qtyMap);
   }, [cart]);
 
-const handleQuantityChange = async (productId, delta) => {
+ const handleQuantityChange = async (productId: string, delta: number) => {
   const currentQty = quantities[productId] || 0;
   const newQty = Math.max(0, currentQty + delta);
-
-  setQuantities((prev) => ({
-    ...prev,
-    [productId]: newQty,
-  }));
-
   const cartItem = cart.find((item) => item.product_id === productId);
 
   try {
     if (newQty === 0 && cartItem) {
       await deleteFromCart(cartItem.id);
-      await refreshCart(); // make sure refresh happens after delete
     } else if (cartItem) {
       await updateCart(cartItem.id, newQty);
     } else if (newQty > 0) {
       await addToCart(productId, newQty);
     }
+    await refreshCart();
   } catch (error) {
-    console.error('❌ Error updating cart:', error);
-    // Optionally show a Snackbar/Toast message to the user here
+    console.error('Error updating cart:', error);
   }
 };
 
 
-const handleCardClick = (productId) => {
-  navigate(`/buyer-dashboard/product-details/${productId}`);
-};
-  const getImageArray = (imageData) => {
+  const handleCardClick = (productId: string) => {
+    navigate(`/buyer-dashboard/product-details/${productId}`);
+  };
+
+  const getImageArray = (imageData: any): string[] => {
     try {
       const parsed = JSON.parse(imageData);
       if (Array.isArray(parsed)) return parsed.map((img) => img.image_url || img);
-      if (typeof parsed === 'object' && parsed.image_url) return [parsed.image_url];
+      if (typeof parsed === 'object' && parsed?.image_url) return [parsed.image_url];
       if (typeof parsed === 'string') return [parsed];
+      return ['/default-product.jpg'];
     } catch {
       return [imageData || '/default-product.jpg'];
     }
   };
 
-  const filteredProducts = products.filter((product) =>
+
+  const filteredProducts = products.filter((product: IProduct) =>
     product.product_name?.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -120,7 +119,7 @@ const handleCardClick = (productId) => {
             }}
             gap={3}
           >
-            {filteredProducts.map((product) => {
+            {filteredProducts.map((product: IProduct) => {
               const images = getImageArray(product.image_url);
               const quantity = quantities[product.id] || 0;
 

@@ -18,12 +18,15 @@ import BuyerHeader from '@/components/common/BuyerHeader';
 import BuyerFooter from '@/components/common/BuyerFooter';
 
 import useBuyerCart from '@/hooks/useCart';
+import type { ICartItem } from '@/types/cart.types';
+import type { IOrderPayload } from '@/types/order.types';
 
-const BuyerCart = () => {
+const BuyerCart: React.FC = () => {
   const navigate = useNavigate();
 
   const {
     cart,
+    updatedCart,
     loading,
     error,
     products,
@@ -37,26 +40,32 @@ const BuyerCart = () => {
   const [showPlaceOrder, setShowPlaceOrder] = useState(false);
   const [address, setAddress] = useState('');
   const [placingOrder, setPlacingOrder] = useState(false);
-
-  const handleUpdateQuantity = (item, delta) => {
+  const handleUpdateQuantity = async (item: ICartItem, delta: number) => {
     const newQty = item.quantity + delta;
 
-    if (newQty < 1) {
-      deleteCartItem(item.id).then(fetchCart);
-    } else {
-      updateCartItem({ id: item.id, quantity: newQty }).then(fetchCart);
+    try {
+      if (newQty < 1) {
+        await deleteCartItem(item.id);
+      } else {
+        await updateCartItem({ ...item, quantity: newQty });
+      }
+
+      await fetchCart(); // ✅ Only one call
+    } catch (error) {
+      console.error('Error updating cart item:', error);
     }
   };
 
-  const handleDeleteItem = (id) => {
+
+  const handleDeleteItem = (id: string) => {
     deleteCartItem(id).then(fetchCart);
   };
 
-  const handleCardClick = (productId) => {
+  const handleCardClick = (productId: string) => {
     navigate(`/buyer-dashboard/product-details/${productId}`);
   };
 
-  const calculateTotal = () =>
+  const calculateTotal = (): number =>
     cart.reduce((total, item) => {
       const product = products.find((p) => p.id === item.product_id);
       if (!product || isNaN(Number(product.price))) return total;
@@ -73,7 +82,7 @@ const BuyerCart = () => {
       return;
     }
 
-    const orderData = {
+    const orderData: IOrderPayload = {
       delivery_address: address,
       products: cart
         .filter((item) => products.some((p) => p.id === item.product_id))
@@ -86,7 +95,15 @@ const BuyerCart = () => {
     setPlacingOrder(true);
     try {
       const res = await placeOrder(orderData);
-      const buyerId = JSON.parse(localStorage.getItem('user'))?.id;
+      const rawUser = localStorage.getItem('user');
+      let buyerId: string | null = null;
+
+      try {
+        const user = rawUser ? JSON.parse(rawUser) : null;
+        buyerId = user?.id || null;
+      } catch (err) {
+        console.warn('Failed to parse user from localStorage');
+      }
 
       if (buyerId) {
         await deleteCartByBuyerId(buyerId);
@@ -146,7 +163,7 @@ const BuyerCart = () => {
                   if (Array.isArray(parsed) && parsed.length > 0) {
                     imageUrl = parsed[0]?.image_url || imageUrl;
                   }
-                } catch {}
+                } catch { }
 
                 return (
                   <Card
@@ -168,15 +185,15 @@ const BuyerCart = () => {
                       component="img"
                       height="100%"
                       image={imageUrl}
-                      alt={product?.product_name || 'Product Image'}
+                      alt={product.product_name || 'Product Image'}
                       sx={{ objectFit: 'cover' }}
                     />
                     <CardContent sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                       <Typography variant="h6" fontSize={16} gutterBottom>
-                        {product?.product_name}
+                        {product.product_name}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        ₹{Number(product?.price).toLocaleString()}
+                        ₹{Number(product.price).toLocaleString()}
                       </Typography>
 
                       <Box
@@ -184,7 +201,7 @@ const BuyerCart = () => {
                         alignItems="center"
                         justifyContent="space-between"
                         mt={2}
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
                       >
                         <Box display="flex" alignItems="center" mt={3}>
                           <IconButton onClick={() => handleUpdateQuantity(item, -1)}>
@@ -272,9 +289,9 @@ const BuyerCart = () => {
                         borderBottom="1px solid #eee"
                         py={1}
                       >
-                        <Typography>{product?.product_name}</Typography>
+                        <Typography>{product.product_name}</Typography>
                         <Typography>
-                          ₹{Number(product?.price).toLocaleString()} × {item.quantity}
+                          ₹{Number(product.price).toLocaleString()} × {item.quantity}
                         </Typography>
                       </Box>
                     );
@@ -290,7 +307,9 @@ const BuyerCart = () => {
                     rows={3}
                     label="Shipping Address"
                     value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setAddress(e.target.value)
+                    }
                     sx={{ mt: 3 }}
                   />
 

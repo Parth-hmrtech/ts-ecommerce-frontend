@@ -5,9 +5,9 @@ import SignIn from '@/pages/auth/signIn';
 import SignUp from '@/pages/auth/signUp';
 import ForgotPassword from '@/pages/auth/forgotPassword';
 
-// import BuyerDashboard from "../views/buyer/BuyerDashboard";
+import BuyerDashboard from "@/pages/buyer/buyerDashboard";
 // import BuyerProductDetail from "../views/buyer/BuyerProductDetail";
-// import BuyerCart from "../views/buyer/BuyerCart";
+import BuyerCart from "@/pages/buyer/buyerCart";
 // import BuyerOrders from "../views/buyer/BuyerOrders";
 // import BuyerWishlist from "../views/buyer/Buyerwishlist";
 // import BuyerProfile from "../views/buyer/BuyerProfile";
@@ -22,7 +22,7 @@ import ForgotPassword from '@/pages/auth/forgotPassword';
 // import SellerReview from "../views/seller/SellerReview";
 // import SellerProfile from "../views/seller/SellerProfile";
 
-// import ProtectedRoute from "../utils/ProtectedRoute";
+import ProtectedRoute from '@/utils/ProtectedRoute';
 
 const AppRoutes = createBrowserRouter([
   {
@@ -43,7 +43,7 @@ const AppRoutes = createBrowserRouter([
   },
 
   // Buyer routes (disabled for now)
-  /*
+  
   {
     element: <ProtectedRoute requiredRole="buyer" />,
     children: [
@@ -51,29 +51,29 @@ const AppRoutes = createBrowserRouter([
         path: "/buyer-dashboard",
         element: <BuyerDashboard />,
       },
-      {
-        path: "/buyer-dashboard/product-details/:productId",
-        element: <BuyerProductDetail />,
-      },
+      // {
+      //   path: "/buyer-dashboard/product-details/:productId",
+      //   element: <BuyerProductDetail />,
+      // },
       {
         path: "/buyer-dashboard/cart",
         element: <BuyerCart />,
       },
-      {
-        path: "/buyer-dashboard/orders",
-        element: <BuyerOrders />,
-      },
-      {
-        path: "/buyer-dashboard/wishlist",
-        element: <BuyerWishlist />,
-      },
-      {
-        path: "/buyer-dashboard/profile",
-        element: <BuyerProfile />,
-      },
+      // {
+      //   path: "/buyer-dashboard/orders",
+      //   element: <BuyerOrders />,
+      // },
+      // {
+      //   path: "/buyer-dashboard/wishlist",
+      //   element: <BuyerWishlist />,
+      // },
+      // {
+      //   path: "/buyer-dashboard/profile",
+      //   element: <BuyerProfile />,
+      // },
     ],
   },
-  */
+  
 
   // Seller routes (disabled for now)
   /*
