@@ -30,7 +30,7 @@ const ForgotPassword: React.FC = () => {
   } = useAuthentication();
   
   const [email, setEmail] = useState<string>('');
-  const [role, setRole] = useState<RoleType>(''); // 'buyer' | 'seller' | ''
+  const [role, setRole] = useState<RoleType>(''); 
   const [emailError, setEmailError] = useState<string>('');
   const [roleError, setRoleError] = useState<string>('');
 
@@ -68,14 +68,6 @@ const ForgotPassword: React.FC = () => {
   };
 
   useEffect(() => {
-    return () => {
-      resetAuth();
-    };
-  }, [resetAuth]);
-
-  useEffect(() => {
-      console.log("sucess",success);
-
     if (success) {
       const timer = setTimeout(() => {
         resetAuth();

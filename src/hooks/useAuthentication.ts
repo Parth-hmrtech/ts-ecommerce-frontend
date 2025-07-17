@@ -8,7 +8,7 @@ import {
   forgotPasswordAction,
 } from '@/store/actions/auth.actions';
 
-import { resetAuthState } from '@/store/reducers/auth.reducer';
+import { resetAuth as resetAuthAction } from '@/store/reducers/auth.reducer';
 import type { IUser } from '@/types/user.types';
 
 interface IForgotPasswordInput {
@@ -42,15 +42,14 @@ const useAuthentication = () => {
   };
 
   const resetAuth = () => {
-    dispatch(resetAuthState());
+    dispatch(resetAuthAction());
   };
 
-  // Clean up auth state on unmount (optional but nice to have)
   useEffect(() => {
     return () => {
-      resetAuth();
+      dispatch(resetAuthAction());
     };
-  }, []);
+  }, [dispatch]);
 
   return {
     user,

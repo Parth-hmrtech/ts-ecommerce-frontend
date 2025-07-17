@@ -17,20 +17,18 @@ export interface IWishlistItem {
   id: string;
   product_id: string;
   buyer_id: string;
+  wishlistId: string;
 }
 
-export interface IAddToWishlistPayload {
-  buyer_id: string;
+export interface IReview {
+  id?: string;
   product_id: string;
-}
-
-export interface IUpdateProductPayload {
-  id: string;
-  [key: string]: any;
-}
-
-export interface IApiResponse<T> {
-  data: T;
-  message?: string;
-  status?: string;
+  order_id: string;
+  buyer_id: string;
+  seller_id: string;
+  rating: number;
+  comment: string;
+  createdAt?: string;
+  updatedAt?: string;
+  productId : string;
 }

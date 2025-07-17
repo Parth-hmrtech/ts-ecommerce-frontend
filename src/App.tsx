@@ -1,9 +1,9 @@
-import React from "react";
-import { RouterProvider } from "react-router-dom";
 import AppRoutes from "./routes";
+import { RouterProvider } from "react-router-dom";
+
 import './App.css';
 
-const App: React.FC = () => {
+const App = () => {
   return <RouterProvider router={AppRoutes} />;
 };
 

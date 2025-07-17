@@ -1,13 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
-
-import type {
-  IProduct,
-  IWishlistItem,
-  IAddToWishlistPayload,
-  IUpdateProductPayload,
-  IApiResponse,
-} from '@/types/product.types';
+import type { APISuccessResponse } from '@/libs/axios';
+import type { IProduct, IWishlistItem } from '@/types/product.types';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('access_token');
@@ -16,175 +10,177 @@ const getAuthHeaders = () => {
   };
 };
 
-export const fetchProductsAction = createAsyncThunk<IProduct[], void>(
+const fetchProductsAction = createAsyncThunk<APISuccessResponse, IProduct>(
   'products/fetchProducts',
-  async (_, { fulfillWithValue, rejectWithValue }) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await apiRequest<IApiResponse<IProduct[]>>({
+      const response = await apiRequest({
         method: 'GET',
         url: '/buyer/products',
       });
-      return fulfillWithValue(response.data?.data || []);
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+      return thunkAPI.fulfillWithValue(response?.data?.data || []);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
 
-export const fetchBuyerProductByIdAction = createAsyncThunk<IProduct, string>(
+const fetchBuyerProductByIdAction = createAsyncThunk<APISuccessResponse, IProduct>(
   'buyer/fetchBuyerProductById',
-  async (productId, { fulfillWithValue, rejectWithValue }) => {
+  async (productId, thunkAPI) => {
     try {
-      const response = await apiRequest<IApiResponse<IProduct>>({
+      const response = await apiRequest({
         method: 'GET',
         url: `/buyer/products/${productId}`,
       });
-      return fulfillWithValue(response.data?.data);
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+      return thunkAPI.fulfillWithValue(response.data?.data || []);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
 
-export const fetchBuyerWishlistAction = createAsyncThunk<IWishlistItem[]>(
+const fetchBuyerWishlistAction = createAsyncThunk<APISuccessResponse, IWishlistItem>(
   'buyerWishlist/fetchBuyerWishlist',
-  async (_, { fulfillWithValue, rejectWithValue }) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await apiRequest<IApiResponse<IWishlistItem[]>>({
+      const response = await apiRequest({
         method: 'GET',
         url: '/buyer/wishlist',
         headers: getAuthHeaders(),
       });
-      return fulfillWithValue(response.data?.data || []);
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+      return thunkAPI.fulfillWithValue(response.data?.data || []);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
 
-export const addToBuyerWishlistAction = createAsyncThunk<
-  IWishlistItem,
-  IAddToWishlistPayload
->(
+const addToBuyerWishlistAction = createAsyncThunk<APISuccessResponse, IWishlistItem>(
   'buyerWishlist/addToBuyerWishlist',
-  async ({ buyer_id, product_id }, { fulfillWithValue, rejectWithValue }) => {
+  async ({ buyer_id, product_id }, thunkAPI) => {
     try {
-      const response = await apiRequest<IApiResponse<IWishlistItem>>({
+      const response = await apiRequest({
         method: 'POST',
         url: '/buyer/wishlist',
         data: { buyer_id, product_id },
         headers: getAuthHeaders(),
       });
-      return fulfillWithValue(response.data?.data);
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+      return thunkAPI.fulfillWithValue(response.data?.data || []);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
 
-export const deleteFromBuyerWishlistAction = createAsyncThunk<
-  { wishlistId: string; message: string },
-  string
->(
+const deleteFromBuyerWishlistAction = createAsyncThunk<APISuccessResponse, string>(
   'buyerWishlist/deleteFromBuyerWishlist',
-  async (wishlistId, { fulfillWithValue, rejectWithValue }) => {
+  async (wishlistId, thunkAPI) => {
     try {
-      const response = await apiRequest<IApiResponse<null>>({
+      const response = await apiRequest({
         method: 'DELETE',
         url: `/buyer/wishlist/${wishlistId}`,
         headers: getAuthHeaders(),
       });
-      return fulfillWithValue({
-        wishlistId,
-        message: response?.data?.message || 'Deleted from wishlist',
-      });
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+
+      return thunkAPI.fulfillWithValue(response.data);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
 
-export const fetchAllProductsAction = createAsyncThunk<IProduct[]>(
+const fetchAllProductsAction = createAsyncThunk<APISuccessResponse, void>(
   'products/fetchAll',
-  async (_, { fulfillWithValue, rejectWithValue }) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await apiRequest<IApiResponse<IProduct[]>>({
+      const response = await apiRequest({
         method: 'GET',
         url: '/seller/products',
         headers: getAuthHeaders(),
       });
-      return fulfillWithValue(response.data?.data || []);
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+      return thunkAPI.fulfillWithValue(response.data?.data || []);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
 
-export const addProductAction = createAsyncThunk<
-  IProduct,
-  FormData | Record<string, any>
->(
+const addProductAction = createAsyncThunk<APISuccessResponse, IProduct>(
   'products/add',
-  async (data, { fulfillWithValue, rejectWithValue }) => {
+  async (data, thunkAPI) => {
     try {
-      const response = await apiRequest<IApiResponse<IProduct>>({
+      const response = await apiRequest({
         method: 'POST',
         url: '/seller/products',
         data,
         headers: getAuthHeaders(),
       });
-      return fulfillWithValue(response.data?.data);
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+
+      return thunkAPI.fulfillWithValue(response.data); 
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
 
-export const updateProductAction = createAsyncThunk<
-  IProduct,
-  IUpdateProductPayload
->(
+const updateProductAction = createAsyncThunk<APISuccessResponse, IProduct>(
   'products/update',
-  async ({ id, ...productData }, { fulfillWithValue, rejectWithValue }) => {
+  async ({ id, ...productData },thunkAPI) => {
     try {
-      const response = await apiRequest<IApiResponse<IProduct>>({
+      const response = await apiRequest({
         method: 'PUT',
         url: `/seller/products/${id}`,
         data: productData,
         headers: getAuthHeaders(),
       });
-      return fulfillWithValue(response.data?.data);
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+      return thunkAPI.fulfillWithValue(response.data?.data || []);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
 
-export const deleteProductAction = createAsyncThunk<string, string>(
+const deleteProductAction = createAsyncThunk(
   'products/delete',
-  async (id, { fulfillWithValue, rejectWithValue }) => {
+  async (id: string, thunkAPI) => {
     try {
       await apiRequest({
         method: 'DELETE',
         url: `/seller/products/${id}`,
         headers: getAuthHeaders(),
       });
-      return fulfillWithValue(id);
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+      return thunkAPI.fulfillWithValue(id);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
 
-export const uploadProductImageAction = createAsyncThunk<
-  IProduct,
-  FormData
->(
+const uploadProductImageAction = createAsyncThunk(
   'productImages/upload',
-  async (formData, { fulfillWithValue, rejectWithValue }) => {
+  async (formData: FormData, thunkAPI) => {
     try {
       const token = localStorage.getItem('access_token');
-      const response = await apiRequest<IApiResponse<IProduct>>({
+      const response = await apiRequest({
         method: 'POST',
         url: '/seller/products/image',
         data: formData,
@@ -193,9 +189,24 @@ export const uploadProductImageAction = createAsyncThunk<
           Authorization: `Bearer ${token}`,
         },
       });
-      return fulfillWithValue(response.data?.data);
-    } catch (error) {
-      return rejectWithValue('Something is wrong here');
+      return thunkAPI.fulfillWithValue(response.data?.data || []);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );
+
+export {
+  fetchProductsAction,
+  fetchBuyerProductByIdAction,
+  fetchBuyerWishlistAction,
+  addToBuyerWishlistAction,
+  deleteFromBuyerWishlistAction,
+  fetchAllProductsAction,
+  addProductAction,
+  updateProductAction,
+  deleteProductAction,
+  uploadProductImageAction,
+};
