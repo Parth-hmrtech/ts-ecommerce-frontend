@@ -45,24 +45,25 @@ const BuyerDashboard: React.FC = () => {
     setQuantities(qtyMap);
   }, [cart]);
 
- const handleQuantityChange = async (productId: string, delta: number) => {
-  const currentQty = quantities[productId] || 0;
-  const newQty = Math.max(0, currentQty + delta);
-  const cartItem = cart.find((item) => item.product_id === productId);
+  const handleQuantityChange = async (productId: string, delta: number) => {
+    const currentQty = quantities[productId] || 0;
+    const newQty = Math.max(0, currentQty + delta);
+    const cartItem = cart.find((item) => item.product_id === productId);
 
-  try {
-    if (newQty === 0 && cartItem) {
-      await deleteFromCart(cartItem.id);
-    } else if (cartItem) {
-      await updateCart(cartItem.id, newQty);
-    } else if (newQty > 0) {
-      await addToCart(productId, newQty);
+    try {
+      if (newQty === 0 && cartItem) {
+        await deleteFromCart(cartItem.id);
+      } else if (cartItem) {
+        await updateCart({ id: cartItem.id, quantity: newQty });  
+      } else if (newQty > 0) {
+        await addToCart({ product_id: productId, quantity: newQty });  
+      }
+
+      await refreshCart();
+    } catch (error) {
+      console.error('Error updating cart:', error);
     }
-    await refreshCart();
-  } catch (error) {
-    console.error('Error updating cart:', error);
-  }
-};
+  };
 
 
   const handleCardClick = (productId: string) => {

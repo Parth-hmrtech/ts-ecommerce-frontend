@@ -75,7 +75,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchBuyerProductByIdAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.productDetail = payload;
+        state.productDetail = payload.data;
         state.alertType = 'success';
         state.message = payload.message;
       })
@@ -93,7 +93,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchAllProductsAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.products = payload;
+        state.products = payload.data;
         state.alertType = 'success';
         state.message = payload.message;
       })
@@ -185,7 +185,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchBuyerWishlistAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.buyerWishlist = payload.data || [];
+        state.buyerWishlist = payload || [];
         state.alertType = 'success';
         state.message = payload.message;
       })
@@ -202,15 +202,17 @@ const productSlice = createSlice({
         state.apiName = 'buyer/addToWishlist';
         state.loading = 'buyer/addToWishlist';
       })
-      .addCase(addToBuyerWishlistAction.fulfilled, (state, { payload }: any) => {
+      .addCase(addToBuyerWishlistAction.fulfilled, (state, { payload = {} }) => {
         state.loading = '';
-        const exists = state.buyerWishlist.some((item) => item._id === payload.data._id);
-        if (!exists) {
-          state.buyerWishlist.push(payload.data);
+        state.buyerWishlist = Array.isArray(state.buyerWishlist) ? state.buyerWishlist : [];
+        const newItem = payload.data;
+        if (newItem && !state.buyerWishlist.some(item => item._id === newItem._id)) {
+          state.buyerWishlist.push(newItem);
         }
         state.alertType = 'success';
-        state.message = payload.message;
+        state.message = payload.message || '';
       })
+
       .addCase(addToBuyerWishlistAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
@@ -223,10 +225,10 @@ const productSlice = createSlice({
         state.apiName = 'buyer/deleteFromWishlist';
         state.loading = 'buyer/deleteFromWishlist';
       })
-        .addCase(deleteFromBuyerWishlistAction.fulfilled, (state, { payload }: any) => {
+      .addCase(deleteFromBuyerWishlistAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
         state.buyerWishlist = state.buyerWishlist.filter(
-          (item) => item._id !== payload.data
+          (item) => item.id !== payload.data
         );
         state.alertType = 'success';
         state.message = payload.message;

@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
+import type { ICartAdd, ICartItem, ICartUpdate } from '@/types/cart.types';
 
 const BASE_ENDPOINT = '/buyer/cart';
 
@@ -29,7 +30,7 @@ const fetchBuyerCartAction = createAsyncThunk<APISuccessResponse, void>(
 
 const addToBuyerCartAction = createAsyncThunk<
   APISuccessResponse,
-  { product_id: string; quantity: number }
+ ICartAdd
 >(
   'buyerCart/add',
   async ({ product_id, quantity }, thunkAPI) => {
@@ -49,7 +50,7 @@ const addToBuyerCartAction = createAsyncThunk<
 
 const updateBuyerCartAction = createAsyncThunk<
   APISuccessResponse,
-  { id: string; quantity: number }
+ ICartUpdate
 >(
   'buyerCart/update',
   async ({ id, quantity }, thunkAPI) => {

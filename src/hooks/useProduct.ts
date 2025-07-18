@@ -35,8 +35,8 @@ import {
   fetchAllSubCategoriesByIdAction,
 } from '@/store/actions/category.action';
 
-import type { ICartItem } from '@/types/cart.types';
-import type { IProduct, IWishlistItem } from '@/types/product.types';
+import type { ICartAdd, ICartUpdate } from '@/types/cart.types';
+import type { IProduct, IWishlistAdd, IWishlistItem } from '@/types/product.types';
 import type { IReview } from '@/types/review.types';
 
 const useProductManager = (productId?: string) => {
@@ -89,11 +89,11 @@ const useProductManager = (productId?: string) => {
     }
   };
 
-  const addToCart = async (payload: ICartItem) => {
+  const addToCart = async (payload: ICartAdd) => {
     return await dispatch(addToBuyerCartAction(payload));
   };
 
-  const updateCart = async (payload: ICartItem) => {
+  const updateCart = async (payload: ICartUpdate) => {
     return await dispatch(updateBuyerCartAction(payload));
   };
 
@@ -101,7 +101,7 @@ const useProductManager = (productId?: string) => {
     return await dispatch(deleteBuyerCartAction(id));
   };
 
-  const addToWishlist = async (payload: IWishlistItem) => {
+  const addToWishlist = async (payload: IWishlistAdd) => {
     return await dispatch(addToBuyerWishlistAction(payload));
   };
 

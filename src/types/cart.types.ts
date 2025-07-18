@@ -5,11 +5,19 @@ export interface ICartItem {
   price: number;
   quantity: number;
   image_url?: string;
+  message: string;
   [key: string]: any;
-    message: string;
-
+ newQty: number
+}
+export interface ICartAdd {
+  product_id: string;
+  quantity: number;
 }
 
+export interface ICartUpdate {
+  id: string;
+  quantity: number;
+}
 export interface BuyerCartState {
   cart: ICartItem[];
   loading: string;
@@ -18,4 +26,3 @@ export interface BuyerCartState {
   message: string;
   error: boolean;
 }
-  

@@ -9,6 +9,7 @@ import {
   IconButton,
   CircularProgress,
 } from '@mui/material';
+
 import { Delete } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +17,7 @@ import BuyerHeader from '@/components/common/BuyerHeader';
 import BuyerFooter from '@/components/common/BuyerFooter';
 import useProductManager from '@/hooks/useProduct';
 
-const BuyerWishlist = () => {
+const BuyerWishlist: React.FC = () => {
   const navigate = useNavigate();
 
   const {
@@ -27,12 +28,13 @@ const BuyerWishlist = () => {
     deleteFromWishlist,
   } = useProductManager();
 
-  const handleCardClick = (productId) => {
+  const handleCardClick = (productId: string) => {
     navigate(`/buyer-dashboard/product-details/${productId}`);
   };
 
+  // Filter unique wishlist items by product_id
   const uniqueWishlist = useMemo(() => {
-    const seen = new Set();
+    const seen = new Set<string>();
     return wishlist.filter(item => {
       if (seen.has(item.product_id)) return false;
       seen.add(item.product_id);
@@ -81,6 +83,7 @@ const BuyerWishlist = () => {
                   imageUrl = parsed[0]?.image_url || imageUrl;
                 }
               } catch (err) {
+                // Ignore JSON parse errors
               }
 
               return (
@@ -113,8 +116,9 @@ const BuyerWishlist = () => {
                     </Typography>
                     <Box display="flex" justifyContent="flex-end">
                       <IconButton
+                        disableRipple
                         onClick={(e) => {
-                          e.stopPropagation();
+                          e.stopPropagation(); 
                           deleteFromWishlist(item.product_id);
                         }}
                         color="error"

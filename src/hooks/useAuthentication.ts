@@ -18,7 +18,6 @@ interface IForgotPasswordInput {
 
 const useAuthentication = () => {
   const dispatch: AppDispatch = useDispatch();
-
   const {
     user,
     loading,
@@ -28,7 +27,6 @@ const useAuthentication = () => {
     apiName,
     alertType,
   } = useSelector((state: RootState) => state.auth);
-
   const signUp = async (body: FormData) => {
     return await dispatch(signUpUserAction(body));
   };

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IProduct, IWishlistItem } from '@/types/product.types';
+import type { IProduct, IWishlistAdd, IWishlistItem } from '@/types/product.types';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('access_token');
@@ -65,7 +65,7 @@ const fetchBuyerWishlistAction = createAsyncThunk<APISuccessResponse>(
   }
 );
 
-const addToBuyerWishlistAction = createAsyncThunk<APISuccessResponse, IWishlistItem>(
+const addToBuyerWishlistAction = createAsyncThunk<APISuccessResponse, IWishlistAdd>(
   'buyerWishlist/addToBuyerWishlist',
   async ({ buyer_id, product_id }, thunkAPI) => {
     try {

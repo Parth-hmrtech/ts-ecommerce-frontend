@@ -7,6 +7,7 @@ export interface IReview {
   rating?: number;
   comment?: string;
   createdAt?: string;
+  created_at?: string;
   updatedAt?: string;
 }
 export type IReviewAdd = {

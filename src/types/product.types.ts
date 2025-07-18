@@ -22,3 +22,7 @@ export interface IWishlistItem {
   wishlistId: string;
 }
 
+export interface IWishlistAdd {
+  buyer_id: string;
+  product_id: string;
+}

@@ -6,10 +6,10 @@ import SignUp from '@/pages/auth/signUp';
 import ForgotPassword from '@/pages/auth/forgotPassword';
 
 import BuyerDashboard from "@/pages/buyer/buyerDashboard";
-// import BuyerProductDetail from "../views/buyer/BuyerProductDetail";
+import BuyerProductDetail from "@/pages/buyer/buyerProductDetail";
 import BuyerCart from "@/pages/buyer/buyerCart";
 import BuyerOrders from "@/pages/buyer/buyerOrder";
-// import BuyerWishlist from "../views/buyer/Buyerwishlist";
+import BuyerWishlist from "@/pages/buyer/buyerWishlist";
 // import BuyerProfile from "../views/buyer/BuyerProfile";
 
 // import SellerDashboard from "../pages/seller/sellerDashboard";
@@ -51,10 +51,10 @@ const AppRoutes = createBrowserRouter([
         path: "/buyer-dashboard",
         element: <BuyerDashboard />,
       },
-      // {
-      //   path: "/buyer-dashboard/product-details/:productId",
-      //   element: <BuyerProductDetail />,
-      // },
+      {
+        path: "/buyer-dashboard/product-details/:productId",
+        element: <BuyerProductDetail />,
+      },
       {
         path: "/buyer-dashboard/cart",
         element: <BuyerCart />,
@@ -63,10 +63,10 @@ const AppRoutes = createBrowserRouter([
         path: "/buyer-dashboard/orders",
         element: <BuyerOrders />,
       },
-      // {
-      //   path: "/buyer-dashboard/wishlist",
-      //   element: <BuyerWishlist />,
-      // },
+      {
+        path: "/buyer-dashboard/wishlist",
+        element: <BuyerWishlist />,
+      },
       // {
       //   path: "/buyer-dashboard/profile",
       //   element: <BuyerProfile />,

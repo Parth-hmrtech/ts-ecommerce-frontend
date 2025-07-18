@@ -8,7 +8,7 @@ import {
   updateBuyerCartAction,
   deleteBuyerCartAction,
 } from '@/store/actions/cart.action';
-import type { ICartItem } from '@/types/cart.types';
+import type { ICartAdd, ICartItem, ICartUpdate } from '@/types/cart.types';
 import type { IProduct } from '@/types/product.types'; // Make sure this exists
 
 const useBuyerDashboard = () => {
@@ -22,12 +22,12 @@ const useBuyerDashboard = () => {
     dispatch(fetchBuyerCartAction());
   }, [dispatch]);
 
-  const addToCart = (product_id: string, quantity: number) => {
-    return dispatch(addToBuyerCartAction({ product_id, quantity }));
+  const addToCart = (payload: ICartAdd) => {
+    return dispatch(addToBuyerCartAction(payload));
   };
 
-  const updateCart = (id: string, quantity: number) => {
-    return dispatch(updateBuyerCartAction({ id, quantity }));
+  const updateCart = (payload: ICartUpdate) => {
+    return dispatch(updateBuyerCartAction(payload));
   };
 
   const deleteFromCart = (id: string) => {

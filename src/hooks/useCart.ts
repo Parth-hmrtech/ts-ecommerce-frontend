@@ -12,7 +12,7 @@ import { fetchProductsAction } from '@/store/actions/product.action';
 import { placeBuyerOrderAction } from '@/store/actions/order.action';
 
 import type { RootState, AppDispatch } from '@/store';
-import type { ICartItem } from '@/types/cart.types';
+import type { ICartUpdate } from '@/types/cart.types';
 import type { IOrderPayload } from '@/types/order.types';
 
 const useBuyerCart = () => {
@@ -29,7 +29,7 @@ const useBuyerCart = () => {
     return dispatch(fetchProductsAction());
   };
 
-  const updateCartItem = (payload: ICartItem) => {
+  const updateCartItem = (payload: ICartUpdate) => {
     return dispatch(updateBuyerCartAction(payload));
   };
 
