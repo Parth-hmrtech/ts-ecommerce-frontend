@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import {
   Box,
   Container,
@@ -17,6 +17,61 @@ import BuyerHeader from '@/components/common/BuyerHeader';
 import BuyerFooter from '@/components/common/BuyerFooter';
 import useProductManager from '@/hooks/useProduct';
 
+const WishlistCard = memo(
+  ({
+    product,
+    productId,
+    imageUrl,
+    onCardClick,
+    onDelete,
+  }: {
+    product: any;
+    productId: string;
+    imageUrl: string;
+    onCardClick: () => void;
+    onDelete: (e: React.MouseEvent) => void;
+  }) => (
+    <Card
+      onClick={onCardClick}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        cursor: 'pointer',
+        transition: 'box-shadow 0.3s ease-in-out',
+        '&:hover': {
+          boxShadow: '0 0 20px rgba(0, 123, 255, 0.4)',
+        },
+      }}
+    >
+      <CardMedia
+        component="img"
+        height="100%"
+        image={imageUrl}
+        alt={product.product_name || 'Product Image'}
+        sx={{ objectFit: 'cover' }}
+      />
+      <CardContent>
+        <Typography variant="h6" fontSize={16} gutterBottom noWrap>
+          {product.product_name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          ₹{Number(product.price || 0).toLocaleString()}
+        </Typography>
+        <Box display="flex" justifyContent="flex-end">
+          <IconButton
+            disableRipple
+            onClick={onDelete}
+            color="error"
+            aria-label="Remove from wishlist"
+          >
+            <Delete />
+          </IconButton>
+        </Box>
+      </CardContent>
+    </Card>
+  )
+);
+
 const BuyerWishlist: React.FC = () => {
   const navigate = useNavigate();
 
@@ -32,10 +87,9 @@ const BuyerWishlist: React.FC = () => {
     navigate(`/buyer-dashboard/product-details/${productId}`);
   };
 
-  // Filter unique wishlist items by product_id
   const uniqueWishlist = useMemo(() => {
     const seen = new Set<string>();
-    return wishlist.filter(item => {
+    return wishlist.filter((item) => {
       if (seen.has(item.product_id)) return false;
       seen.add(item.product_id);
       return true;
@@ -73,7 +127,7 @@ const BuyerWishlist: React.FC = () => {
             }}
           >
             {uniqueWishlist.map((item) => {
-              const product = products.find(p => p.id === item.product_id);
+              const product = products.find((p) => p.id === item.product_id);
               if (!product) return null;
 
               let imageUrl = '/default-product.jpg';
@@ -82,53 +136,20 @@ const BuyerWishlist: React.FC = () => {
                 if (Array.isArray(parsed) && parsed.length > 0) {
                   imageUrl = parsed[0]?.image_url || imageUrl;
                 }
-              } catch (err) {
-                // Ignore JSON parse errors
-              }
+              } catch (err) {}
 
               return (
-                <Card
+                <WishlistCard
                   key={item.product_id}
-                  onClick={() => handleCardClick(product.id)}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    cursor: 'pointer',
-                    transition: 'box-shadow 0.3s ease-in-out',
-                    '&:hover': {
-                      boxShadow: '0 0 20px rgba(0, 123, 255, 0.4)',
-                    },
+                  product={product}
+                  productId={item.product_id}
+                  imageUrl={imageUrl}
+                  onCardClick={() => handleCardClick(product.id)}
+                  onDelete={(e) => {
+                    e.stopPropagation();
+                    deleteFromWishlist(item.product_id);
                   }}
-                >
-                  <CardMedia
-                    component="img"
-                    height="100%"
-                    image={imageUrl}
-                    alt={product.product_name || 'Product Image'}
-                    sx={{ objectFit: 'cover' }}
-                  />
-                  <CardContent>
-                    <Typography variant="h6" fontSize={16} gutterBottom noWrap>
-                      {product.product_name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      ₹{Number(product.price || 0).toLocaleString()}
-                    </Typography>
-                    <Box display="flex" justifyContent="flex-end">
-                      <IconButton
-                        disableRipple
-                        onClick={(e) => {
-                          e.stopPropagation(); 
-                          deleteFromWishlist(item.product_id);
-                        }}
-                        color="error"
-                        aria-label="Remove from wishlist"
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  </CardContent>
-                </Card>
+                />
               );
             })}
           </Box>

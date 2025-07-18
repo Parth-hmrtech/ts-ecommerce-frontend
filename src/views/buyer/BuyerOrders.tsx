@@ -411,7 +411,6 @@ const BuyerOrders: React.FC = () => {
                                         </TableRow>
                                       ))}
 
-                                    {/* Add New Review */}
                                     {order.status === 'delivered' && (
                                       <TableRow key={`${orderKey}-add-review`}>
                                         <TableCell colSpan={4}>
@@ -507,7 +506,6 @@ const BuyerOrders: React.FC = () => {
         )}
       </Container>
 
-      {/* Payment Modal */}
       <Modal open={paymentModalOpen} onClose={() => setPaymentModalOpen(false)}>
         <Box
           sx={{

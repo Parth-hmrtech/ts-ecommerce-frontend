@@ -18,7 +18,9 @@ import type { IOrderPayload } from '@/types/order.types';
 const useBuyerCart = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { cart, loading, error } = useSelector((state: RootState) => state.cart);
+const { cart, updatedCart, loading, error } = useSelector(
+  (state: RootState) => state.cart
+);
   const { products } = useSelector((state: RootState) => state.product);
 
   const fetchCart = () => {
@@ -46,14 +48,13 @@ const useBuyerCart = () => {
   };
 
   useEffect(() => {
-    // Only run on first render
     fetchCart();
     fetchProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // empty deps means "run only once on mount"
+  }, []); 
 
   return {
     cart,
+    updatedCart,
     loading,
     error,
     products,

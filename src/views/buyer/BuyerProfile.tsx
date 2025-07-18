@@ -206,21 +206,40 @@ const handleUpdate = async () => {
       <BuyerHeader />
       <Box sx={{ flex: 1, p: 3, display: 'flex', justifyContent: 'center' }}>
         <Paper elevation={3} sx={{ p: 4, borderRadius: 3, maxWidth: 1200, width: '100%', gap: 4, display: 'flex', flexDirection: 'row' }}>
-          <Box component={Paper} elevation={2} sx={{ p: 3, borderRadius: 3, flex: 1, bgcolor: '#fafafa' }}>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar src={profile?.image_url} sx={{ width: 80, height: 80 }} />
-              <Typography variant="h6" fontWeight="bold">
-                <Person fontSize="small" /> Profile Info
-              </Typography>
-            </Stack>
-            <Divider sx={{ my: 2 }} />
-            {['first_name', 'last_name', 'email', 'phone_number'].map((field) => (
-              <Typography key={field} sx={{ mt: 1 }}>
-                <strong>{field.replace('_', ' ').toUpperCase()}:</strong>{' '}
-                {(profile as Record<string, any>)?.[field] || '—'}
-              </Typography>
-            ))}
-          </Box>
+         <Box
+  component={Paper}
+  elevation={2}
+  sx={{
+    p: 3,
+    borderRadius: 3,
+    flex: 1,
+    bgcolor: '#fafafa',
+  }}
+>
+  <Stack direction="row" spacing={2} alignItems="center">
+    <Avatar src={profile?.image_url} sx={{ width: 80, height: 80 }} />
+    <Typography variant="h6" fontWeight="bold">
+      <Person fontSize="small" sx={{ verticalAlign: 'middle', mr: 1 }} />
+      Profile Info
+    </Typography>
+  </Stack>
+
+  <Divider sx={{ my: 2 }} />
+
+  <Stack spacing={1}>
+    {['first_name', 'last_name', 'email', 'phone_number'].map((field) => (
+      <Stack key={field} direction="row" spacing={1}>
+        <Typography variant="body1" sx={{ fontWeight: 500, minWidth: 140 }}>
+          {field.replace('_', ' ').toUpperCase()}:
+        </Typography>
+        <Typography variant="body1">
+          {(profile as Record<string, any>)?.[field] || '—'}
+        </Typography>
+      </Stack>
+    ))}
+  </Stack>
+</Box>
+
 
           <Box sx={{ flex: 2 }}>
             <Typography variant="h6"><Edit color="primary" /> Edit Profile</Typography>

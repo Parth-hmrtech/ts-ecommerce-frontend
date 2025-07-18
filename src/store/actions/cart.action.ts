@@ -60,7 +60,8 @@ const updateBuyerCartAction = createAsyncThunk<
         url: `${BASE_ENDPOINT}/${id}`,
         headers: getAuthHeaders(),
         data: { quantity },
-      });      
+      });   
+         
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(new Error(error?.response?.data?.message || 'Something is wrong here'));

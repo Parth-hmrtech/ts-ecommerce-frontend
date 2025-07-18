@@ -10,6 +10,7 @@ import type { ICartItem } from '@/types/cart.types';
 
 interface BuyerCartState {
   cart: ICartItem[];
+  updatedCart: ICartItem | null;
   loading: string;
   apiName: string;
   alertType: string;
@@ -19,6 +20,7 @@ interface BuyerCartState {
 
 const initialState: BuyerCartState = {
   cart: [],
+updatedCart: null,
   loading: '',
   apiName: '',
   alertType: '',
@@ -83,16 +85,18 @@ const buyerCartSlice = createSlice({
         state.loading = '';
         state.alertType = 'success';
         state.message = payload.message;
-
-        const updatedCart: ICartItem | undefined = payload?.data?.updatedCart;
-        if (updatedCart && updatedCart.id) {
-          state.cart = state.cart.map((item) =>
-            item.id === updatedCart.id ? updatedCart : item
-          );
-        }
-
         state.error = false;
+
+        const updatedCartItem: ICartItem | undefined = payload?.data?.updatedCart;
+
+        if (updatedCartItem && updatedCartItem.id) {
+          state.cart = state.cart.map((item) =>
+            item.id === updatedCartItem.id ? updatedCartItem : item
+          );
+          state.updatedCart = updatedCartItem; 
+        }
       })
+
       .addCase(updateBuyerCartAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';

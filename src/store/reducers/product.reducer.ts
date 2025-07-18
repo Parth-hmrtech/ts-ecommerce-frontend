@@ -228,7 +228,7 @@ const productSlice = createSlice({
       .addCase(deleteFromBuyerWishlistAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
         state.buyerWishlist = state.buyerWishlist.filter(
-          (item) => item.id !== payload.data
+          (item) => item._id !== payload.data
         );
         state.alertType = 'success';
         state.message = payload.message;
