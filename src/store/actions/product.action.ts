@@ -15,12 +15,12 @@ const fetchProductsAction = createAsyncThunk<APISuccessResponse, void>(
 
   async (_, thunkAPI) => {
     try {
-      
+
       const response = await apiRequest({
         method: 'GET',
         url: '/buyer/products',
       });
-      
+
       return thunkAPI.fulfillWithValue(response?.data?.data || []);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -30,7 +30,7 @@ const fetchProductsAction = createAsyncThunk<APISuccessResponse, void>(
   }
 );
 
-const fetchBuyerProductByIdAction = createAsyncThunk<APISuccessResponse, IProduct>(
+const fetchBuyerProductByIdAction = createAsyncThunk<APISuccessResponse, string>(
   'buyer/fetchBuyerProductById',
   async (productId, thunkAPI) => {
     try {
@@ -38,16 +38,16 @@ const fetchBuyerProductByIdAction = createAsyncThunk<APISuccessResponse, IProduc
         method: 'GET',
         url: `/buyer/products/${productId}`,
       });
-      return thunkAPI.fulfillWithValue(response.data?.data || []);
+
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         new Error(error?.response?.data?.message || 'Something is wrong here')
       );
     }
-  }
-);
+  });
 
-const fetchBuyerWishlistAction = createAsyncThunk<APISuccessResponse, IWishlistItem>(
+const fetchBuyerWishlistAction = createAsyncThunk<APISuccessResponse>(
   'buyerWishlist/fetchBuyerWishlist',
   async (_, thunkAPI) => {
     try {
@@ -132,7 +132,7 @@ const addProductAction = createAsyncThunk<APISuccessResponse, IProduct>(
         headers: getAuthHeaders(),
       });
 
-      return thunkAPI.fulfillWithValue(response.data); 
+      return thunkAPI.fulfillWithValue(response.data);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         new Error(error?.response?.data?.message || 'Something is wrong here')
@@ -143,7 +143,7 @@ const addProductAction = createAsyncThunk<APISuccessResponse, IProduct>(
 
 const updateProductAction = createAsyncThunk<APISuccessResponse, IProduct>(
   'products/update',
-  async ({ id, ...productData },thunkAPI) => {
+  async ({ id, ...productData }, thunkAPI) => {
     try {
       const response = await apiRequest({
         method: 'PUT',
