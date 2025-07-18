@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import type { ChangeEvent } from 'react';
 import {
   Box, Typography, TextField, Button, Paper, Alert, InputAdornment,
   IconButton, Divider, Avatar, Stack
@@ -11,14 +12,30 @@ import BuyerHeader from '@/components/common/BuyerHeader';
 import BuyerFooter from '@/components/common/BuyerFooter';
 import useUserProfile from '@/hooks/useUser';
 
-const BuyerProfile = () => {
-  const userId = useMemo(() => {
+interface FormDataState {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  image: File | null;
+  image_url: string;
+}
+
+interface FormErrors {
+  [key: string]: string;
+}
+
+const BuyerProfile: React.FC = () => {
+  const storedUser = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem('user'))?.id || null;
+      const parsed = JSON.parse(localStorage.getItem('user') || '{}');
+      return parsed?.id ? parsed : null;
     } catch {
       return null;
     }
   }, []);
+
+  const userId = storedUser?.id || null;
 
   const {
     profile,
@@ -26,11 +43,9 @@ const BuyerProfile = () => {
     updateUserProfile,
     resetUserPassword,
     loading,
-    alertType,
-    message,
   } = useUserProfile();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataState>({
     first_name: '',
     last_name: '',
     email: '',
@@ -39,26 +54,26 @@ const BuyerProfile = () => {
     image_url: '',
   });
 
-  const [formErrors, setFormErrors] = useState({});
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [passwordErrors, setPasswordErrors] = useState({});
+  const [passwordErrors, setPasswordErrors] = useState<FormErrors>({});
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [passwordResetMessage, setPasswordResetMessage] = useState('');
-  const [passwordResetSeverity, setPasswordResetSeverity] = useState('error');
+  const [passwordResetSeverity, setPasswordResetSeverity] = useState<'error' | 'warning' | 'success'>('error');
   const [updateMessage, setUpdateMessage] = useState('');
-  const [updateAlertType, setUpdateAlertType] = useState('success');
+  const [updateAlertType, setUpdateAlertType] = useState<'error' | 'success'>('success');
 
   useEffect(() => {
-    if (userId) fetchUserProfile(userId);
+    if (userId) fetchUserProfile();
   }, [userId]);
 
   useEffect(() => {
-    const user = profile?.user;
-    if (user) {
-      const { first_name, last_name, email, phone_number, image_url } = user;
+    if (profile) {
+      const { first_name, last_name, email, phone_number, image_url } = profile;
+
       setFormData({
         first_name: first_name || '',
         last_name: last_name || '',
@@ -68,55 +83,71 @@ const BuyerProfile = () => {
         image_url: image_url || '',
       });
 
-      localStorage.setItem('user', JSON.stringify(user)); 
+      localStorage.setItem('user', JSON.stringify(profile));
     }
   }, [profile]);
 
   const validateForm = () => {
-    const errors = {};
+    const errors: FormErrors = {};
     if (!formData.first_name.trim()) errors.first_name = 'First name is required';
     if (!formData.last_name.trim()) errors.last_name = 'Last name is required';
     if (!formData.email.trim()) {
       errors.email = 'Email is required';
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      errors.email = 'Invalid email';
+      errors.email = 'Invalid email format';
     }
     if (!formData.phone_number.trim()) errors.phone_number = 'Phone number is required';
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  const handleUpdate = async () => {
-    if (!validateForm() || !userId) return;
+const handleUpdate = async () => {
+  if (!validateForm() || !userId) return;
 
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key === 'image' && value instanceof File) {
-        data.append('image', value);
-      } else if (key !== 'image_url') {
-        data.append(key, value);
+  const data = new FormData();
+
+  for (const [key, value] of Object.entries(formData)) {
+    if (key === 'image') {
+      if (value instanceof File) {
+        data.append('image', value); 
       }
-    });
-
-    try {
-      const res = await updateUserProfile({ id: userId, data }).unwrap();
-      fetchUserProfile(userId);
-      console.log(res);
-
-      const msg = res?.data?.message || res?.message;
-      setUpdateAlertType('success');
-      setUpdateMessage(msg);
-    } catch (err) {
-      const msg = err?.response?.data?.message || err?.message;
-      setUpdateAlertType('error');
-      setUpdateMessage(msg);
-    } finally {
-      setTimeout(() => setUpdateMessage(''), 3000);
+    } else if (key !== 'image_url' && value !== null && value !== '') {
+      data.append(key, value); 
     }
-  };
+  }
+
+  try {
+ 
+
+    const res = await updateUserProfile({ id: userId, data }).unwrap();
+    fetchUserProfile();
+    const updatedUser = res?.data?.user;
+    if (updatedUser) {
+      setFormData((prev) => ({
+        ...prev,
+        ...updatedUser,
+        image: null, 
+        image_url: updatedUser.image_url || prev.image_url,
+      }));
+    }
+
+    const msg = res?.data?.message || res?.message || 'Profile updated successfully';
+    setUpdateAlertType('success');
+    setUpdateMessage(msg);
+  } catch (err: any) {
+    const msg = err?.response?.data?.message || err?.message || 'Failed to update profile';
+    setUpdateAlertType('error');
+    setUpdateMessage(msg);
+  } finally {
+    setTimeout(() => setUpdateMessage(''), 3000);
+  }
+};
+
+
 
   const validatePassword = () => {
-    const errors = {};
+    const errors: FormErrors = {};
     if (!oldPassword) errors.oldPassword = 'Old password required';
     if (!newPassword) {
       errors.newPassword = 'New password required';
@@ -143,8 +174,8 @@ const BuyerProfile = () => {
         setOldPassword('');
         setNewPassword('');
       }
-    } catch (err) {
-      const msg = err?.response?.data?.message;
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.message || 'Reset failed';
       setPasswordResetSeverity('error');
       setPasswordResetMessage(msg);
     } finally {
@@ -153,7 +184,7 @@ const BuyerProfile = () => {
     }
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setFormData((prev) => ({
@@ -164,7 +195,7 @@ const BuyerProfile = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setFormErrors((prev) => ({ ...prev, [name]: '' }));
@@ -177,7 +208,7 @@ const BuyerProfile = () => {
         <Paper elevation={3} sx={{ p: 4, borderRadius: 3, maxWidth: 1200, width: '100%', gap: 4, display: 'flex', flexDirection: 'row' }}>
           <Box component={Paper} elevation={2} sx={{ p: 3, borderRadius: 3, flex: 1, bgcolor: '#fafafa' }}>
             <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar src={profile?.user?.image_url} sx={{ width: 80, height: 80 }} />
+              <Avatar src={profile?.image_url} sx={{ width: 80, height: 80 }} />
               <Typography variant="h6" fontWeight="bold">
                 <Person fontSize="small" /> Profile Info
               </Typography>
@@ -185,7 +216,8 @@ const BuyerProfile = () => {
             <Divider sx={{ my: 2 }} />
             {['first_name', 'last_name', 'email', 'phone_number'].map((field) => (
               <Typography key={field} sx={{ mt: 1 }}>
-                <strong>{field.replace('_', ' ').toUpperCase()}:</strong> {profile?.user?.[field] || '—'}
+                <strong>{field.replace('_', ' ').toUpperCase()}:</strong>{' '}
+                {(profile as Record<string, any>)?.[field] || '—'}
               </Typography>
             ))}
           </Box>
@@ -219,7 +251,8 @@ const BuyerProfile = () => {
                     objectFit: 'cover',
                   }}
                 />
-              )}              <Button variant="outlined" component="label" startIcon={<PhotoCamera />}>
+              )}
+              <Button variant="outlined" component="label" startIcon={<PhotoCamera />}>
                 Upload Image
                 <input type="file" hidden accept="image/*" onChange={handleImageChange} />
               </Button>

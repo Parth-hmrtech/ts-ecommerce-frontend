@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IUser } from '@/types/user.types';
+import type { IResetUserPassword, IUpdateUser, IUser } from '@/types/user.types';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('access_token');
@@ -19,8 +19,8 @@ const fetchUserProfileAction = createAsyncThunk<APISuccessResponse, void>(
         url: '/profile',
         headers: getAuthHeaders(),
       });
-
-      return thunkAPI.fulfillWithValue(response.data?.data || {});
+      
+      return thunkAPI.fulfillWithValue(response.data?.data?.user || {});
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         new Error(error?.response?.data?.message || 'Something is wrong here')
@@ -29,12 +29,10 @@ const fetchUserProfileAction = createAsyncThunk<APISuccessResponse, void>(
   }
 );
 
-const updateUserProfileAction = createAsyncThunk<APISuccessResponse, IUser>(
+const updateUserProfileAction = createAsyncThunk<APISuccessResponse, IUpdateUser>(
   'userProfile/update',
-  async ({ id, ...rest }, thunkAPI) => {
+  async ({ id, data }, thunkAPI) => {
     try {
-      const data = rest as Partial<IUser> | FormData;
-
       const response = await apiRequest({
         method: 'PUT',
         url: `/profile/${id}`,
@@ -45,6 +43,7 @@ const updateUserProfileAction = createAsyncThunk<APISuccessResponse, IUser>(
         },
       });
 
+
       return thunkAPI.fulfillWithValue(response.data?.data || {});
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -55,7 +54,8 @@ const updateUserProfileAction = createAsyncThunk<APISuccessResponse, IUser>(
 );
 
 
-const resetUserPasswordAction = createAsyncThunk<APISuccessResponse, IUser>(
+
+const resetUserPasswordAction = createAsyncThunk<APISuccessResponse, IResetUserPassword>(
   'userProfile/resetPassword',
   async ({ oldPassword, newPassword }, thunkAPI) => {
     try {

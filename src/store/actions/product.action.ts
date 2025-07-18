@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IProduct, IWishlistAdd, IWishlistItem } from '@/types/product.types';
+import type { IProduct, IWishlistAdd } from '@/types/product.types';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('access_token');

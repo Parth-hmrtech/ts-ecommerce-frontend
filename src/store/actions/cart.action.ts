@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { ICartAdd, ICartItem, ICartUpdate } from '@/types/cart.types';
+import type { ICartAdd, ICartUpdate } from '@/types/cart.types';
 
 const BASE_ENDPOINT = '/buyer/cart';
 

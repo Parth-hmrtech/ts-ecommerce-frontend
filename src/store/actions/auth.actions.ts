@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IUser } from '@/types/user.types';
+import type { ISign } from '@/types/user.types';
 
   const signUpUserAction = createAsyncThunk<APISuccessResponse, FormData>(
     'auth/signUpUser',
@@ -24,7 +24,7 @@ import type { IUser } from '@/types/user.types';
     }
   );
 
-const signInUserAction = createAsyncThunk<APISuccessResponse, IUser>(
+const signInUserAction = createAsyncThunk<APISuccessResponse, ISign>(
   'auth/signInUser',
   async (credentials, thunkAPI) => {
     try {

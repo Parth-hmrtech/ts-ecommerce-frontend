@@ -10,7 +10,7 @@ import BuyerProductDetail from "@/pages/buyer/buyerProductDetail";
 import BuyerCart from "@/pages/buyer/buyerCart";
 import BuyerOrders from "@/pages/buyer/buyerOrder";
 import BuyerWishlist from "@/pages/buyer/buyerWishlist";
-// import BuyerProfile from "../views/buyer/BuyerProfile";
+import BuyerProfile from "@/pages/buyer/buyerProfile";
 
 // import SellerDashboard from "../pages/seller/sellerDashboard";
 // import SellerCategory from "../views/seller/SellerCategory";
@@ -42,7 +42,6 @@ const AppRoutes = createBrowserRouter([
     element: <ForgotPassword />,
   },
 
-  // Buyer routes (disabled for now)
   
   {
     element: <ProtectedRoute requiredRole="buyer" />,
@@ -67,10 +66,10 @@ const AppRoutes = createBrowserRouter([
         path: "/buyer-dashboard/wishlist",
         element: <BuyerWishlist />,
       },
-      // {
-      //   path: "/buyer-dashboard/profile",
-      //   element: <BuyerProfile />,
-      // },
+      {
+        path: "/buyer-dashboard/profile",
+        element: <BuyerProfile />,
+      },
     ],
   },
   

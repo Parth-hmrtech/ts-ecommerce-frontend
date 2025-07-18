@@ -9,7 +9,7 @@ import {
 } from '@/store/actions/auth.actions';
 
 import { resetAuth as resetAuthAction } from '@/store/reducers/auth.reducer';
-import type { IUser } from '@/types/user.types';
+import type { ISign } from '@/types/user.types';
 
 interface IForgotPasswordInput {
   email: string;
@@ -31,7 +31,7 @@ const useAuthentication = () => {
     return await dispatch(signUpUserAction(body));
   };
 
-  const signIn = async (body: IUser) => {
+  const signIn = async (body: ISign) => {
     return await dispatch(signInUserAction(body));
   };
 

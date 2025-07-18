@@ -36,7 +36,7 @@ import {
 } from '@/store/actions/category.action';
 
 import type { ICartAdd, ICartUpdate } from '@/types/cart.types';
-import type { IProduct, IWishlistAdd, IWishlistItem } from '@/types/product.types';
+import type { IProduct, IWishlistAdd } from '@/types/product.types';
 import type { IReview } from '@/types/review.types';
 
 const useProductManager = (productId?: string) => {
@@ -64,7 +64,6 @@ const useProductManager = (productId?: string) => {
     subcategoriesByCategory: sellerSubcategories = [],
   } = useSelector((state: RootState) => state.category || {});
 
-  // Buyer
   const fetchProduct = async () => {
     if (productId) {
       return await dispatch(fetchBuyerProductByIdAction(productId));
@@ -118,7 +117,6 @@ const useProductManager = (productId?: string) => {
     return await dispatch(deleteBuyerReviewAction(id));
   };
 
-  // Seller
   const fetchAllProducts = async () => {
     return await dispatch(fetchAllProductsAction());
   };

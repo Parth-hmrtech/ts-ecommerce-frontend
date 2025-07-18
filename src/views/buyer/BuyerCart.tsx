@@ -26,7 +26,6 @@ const BuyerCart: React.FC = () => {
 
   const {
     cart,
-    updatedCart,
     loading,
     error,
     products,
@@ -50,7 +49,7 @@ const BuyerCart: React.FC = () => {
         await updateCartItem({ ...item, quantity: newQty });
       }
 
-      await fetchCart(); // ✅ Only one call
+      await fetchCart(); 
     } catch (error) {
       console.error('Error updating cart item:', error);
     }
