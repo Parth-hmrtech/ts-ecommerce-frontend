@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IOrder, IOrderPayload } from '@/types/order.types';
+import type { IOrder, IOrderAddressUpdate, IOrderPayload } from '@/types/order.types';
 
 const getTokenHeader = () => {
   const token = localStorage.getItem('access_token');
@@ -61,7 +61,10 @@ const fetchBuyerOrderByIdAction = createAsyncThunk<APISuccessResponse, string>(
   }
 );
 
-const updateBuyerOrderAddressAction = createAsyncThunk<APISuccessResponse, IOrder>(
+const updateBuyerOrderAddressAction = createAsyncThunk<
+  APISuccessResponse,
+  IOrderAddressUpdate
+>(
   'buyerOrder/updateBuyerOrderAddress',
   async ({ orderId, delivery_address }, thunkAPI) => {
     try {
@@ -73,7 +76,9 @@ const updateBuyerOrderAddressAction = createAsyncThunk<APISuccessResponse, IOrde
       });
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(new Error(error?.response?.data?.message || 'Something is wrong here'));
+      return thunkAPI.rejectWithValue(
+        new Error(error?.response?.data?.message || 'Something is wrong here')
+      );
     }
   }
 );

@@ -8,15 +8,7 @@ import {
   deleteSellerReviewAction,
 } from '@/store/actions/review.action';
 
-export interface IReview {
-  id: string;
-  productId?: string;
-  userId?: string;
-  rating?: number;
-  comment?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import type { IReview } from '@/types/review.types';
 
 interface ReviewState {
   buyerReviews: IReview[];

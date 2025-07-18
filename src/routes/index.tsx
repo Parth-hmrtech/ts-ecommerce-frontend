@@ -8,7 +8,7 @@ import ForgotPassword from '@/pages/auth/forgotPassword';
 import BuyerDashboard from "@/pages/buyer/buyerDashboard";
 // import BuyerProductDetail from "../views/buyer/BuyerProductDetail";
 import BuyerCart from "@/pages/buyer/buyerCart";
-// import BuyerOrders from "../views/buyer/BuyerOrders";
+import BuyerOrders from "@/pages/buyer/buyerOrder";
 // import BuyerWishlist from "../views/buyer/Buyerwishlist";
 // import BuyerProfile from "../views/buyer/BuyerProfile";
 
@@ -59,10 +59,10 @@ const AppRoutes = createBrowserRouter([
         path: "/buyer-dashboard/cart",
         element: <BuyerCart />,
       },
-      // {
-      //   path: "/buyer-dashboard/orders",
-      //   element: <BuyerOrders />,
-      // },
+      {
+        path: "/buyer-dashboard/orders",
+        element: <BuyerOrders />,
+      },
       // {
       //   path: "/buyer-dashboard/wishlist",
       //   element: <BuyerWishlist />,

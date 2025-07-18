@@ -1,12 +1,19 @@
-
 export interface IOrder {
   id: string;
-  products: string[];
+  orderId?: string;
+  buyer_id: string;
+  seller_id: string;
   delivery_address: string;
   status: string;
-   orderId: string;
-   
+  order_date: string;
+  order_items: IOrderItem[];
 }
+export interface IOrderAddressUpdate {
+  orderId: string;
+  delivery_address: string;
+}
+
+
 
 export interface IOrderProduct {
   product_id: string;
@@ -15,4 +22,10 @@ export interface IOrderProduct {
 export interface IOrderPayload {
   delivery_address: string;
   products: IOrderProduct[];
+}
+
+export  interface IOrderItem {
+  product_id: string;
+  price: number;
+  quantity: number;
 }

@@ -67,7 +67,7 @@ const orderSlice = createSlice({
       })
       .addCase(fetchBuyerOrdersAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.buyerOrders = payload;
+        state.buyerOrders = payload.data;        
         state.alertType = 'success';
         state.message = 'Orders fetched successfully';
       })

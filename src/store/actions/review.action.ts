@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IReview } from '@/types/product.types';
+import type { IReview, IReviewAdd } from '@/types/review.types';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('access_token');
@@ -28,7 +28,7 @@ const fetchBuyerReviewByProductIdAction = createAsyncThunk<APISuccessResponse, s
   }
 );
 
-const addBuyerReviewAction = createAsyncThunk<APISuccessResponse, IReview>(
+const addBuyerReviewAction = createAsyncThunk<APISuccessResponse, IReviewAdd>(
   'buyerReview/add',
   async (reviewData, thunkAPI) => {
     try {

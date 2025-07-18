@@ -1,6 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useCallback } from 'react';
+
 import type { RootState, AppDispatch } from '@/store';
+import type { IOrder,IOrderAddressUpdate } from '@/types/order.types';
+import type { IReview ,IReviewAdd } from '@/types/review.types';
+import type { IPayment } from '@/types/payment.types';
 
 import {
   fetchBuyerOrdersAction,
@@ -24,54 +28,50 @@ import {
 } from '@/store/actions/review.action';
 
 import { fetchProductsAction } from '@/store/actions/product.action';
-import type { IOrder } from '@/types/order.types';
 
 type Role = 'buyer' | 'seller';
 
 const useOrderManager = (role: Role = 'buyer') => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const order = useSelector((state: RootState) => state.order || {});
-  const payment = useSelector((state: RootState) => state.payment || {});
-  const review = useSelector((state: RootState) => state.review || {});
-  const product = useSelector((state: RootState) => state.product || {});
+  const order = useSelector((state: RootState) => state.order);
+  const payment = useSelector((state: RootState) => state.payment);
+  const review = useSelector((state: RootState) => state.review);
+  const product = useSelector((state: RootState) => state.product);
 
   const products = product.products || [];
-  const buyerReviews = review.buyerReviews || [];
+  const buyerReviews: IReview[] = review.buyerReviews || [];
   const buyerCheckPayments = payment.buyerPayment;
 
   const fetchBuyerOrders = useCallback(() => {
     dispatch(fetchBuyerOrdersAction());
   }, [dispatch]);
-const deleteBuyerOrder = useCallback((orderId: string) => {
-  dispatch(deleteBuyerOrderAction(orderId));
-}, [dispatch]);
 
-
-const updateBuyerOrderAddress = useCallback(
-  (payload: { orderId: string; delivery_address: string }) => {
-    dispatch(updateBuyerOrderAddressAction(payload));
-  },
-  [dispatch]
-);
-
-  const fetchPaymentStatus = useCallback(() => {
-    dispatch(buyerCheckPaymentStatusAction()); 
+  const deleteBuyerOrder = useCallback((orderId: string) => {
+    dispatch(deleteBuyerOrderAction(orderId));
   }, [dispatch]);
 
-  const checkoutPayment = useCallback((payload: any) => {
+  const updateBuyerOrderAddress = useCallback((payload: IOrderAddressUpdate) => {
+    dispatch(updateBuyerOrderAddressAction(payload));
+  }, [dispatch]);
+
+  const fetchPaymentStatus = useCallback(() => {
+    dispatch(buyerCheckPaymentStatusAction());
+  }, [dispatch]);
+
+  const checkoutPayment = useCallback((payload: IPayment) => {
     dispatch(buyerCheckoutPaymentAction(payload));
   }, [dispatch]);
 
-  const verifyPayment = useCallback((payload: any) => {
+  const verifyPayment = useCallback((payload: IPayment) => {
     dispatch(buyerVerifyPaymentAction(payload));
   }, [dispatch]);
 
-  const addReview = useCallback((payload: any) => {
+  const addReview = useCallback((payload: IReviewAdd) => {
     dispatch(addBuyerReviewAction(payload));
   }, [dispatch]);
 
-  const updateReview = useCallback((payload: any) => {
+  const updateReview = useCallback((payload: IReview) => {
     dispatch(updateBuyerReviewAction(payload));
   }, [dispatch]);
 
@@ -102,7 +102,7 @@ const updateBuyerOrderAddress = useCallback(
       fetchBuyerOrders();
       fetchPaymentStatus();
       fetchSellerProducts();
-    } else if (role === 'seller') {
+    } else {
       fetchSellerOrders();
       fetchSellerProducts();
     }
@@ -111,24 +111,28 @@ const updateBuyerOrderAddress = useCallback(
   return {
     role,
 
+    // Common
     products,
-    orders: order.buyerOrders || [],
-    loading: order.loading || false,
-    error: order.error || null,
     buyerCheckPayments,
     buyerReviews,
 
+    // Buyer
+    orders: order.buyerOrders || [],
+    loading: order.loading || false,
+    error: order.error || null,
     fetchOrders: fetchBuyerOrders,
     deleteOrder: deleteBuyerOrder,
     updateOrderAddress: updateBuyerOrderAddress,
     fetchPaymentStatus,
     checkoutPayment,
     verifyPayment,
+
     addReview,
     updateReview,
     deleteReview,
     fetchReviewsByProductId,
 
+    // Seller
     sellerOrders: order.sellerOrders || [],
     sellerProducts: product.products || [],
     fetchSellerOrders,
