@@ -420,28 +420,32 @@ const BuyerOrders: React.FC = () => {
                                               <Select
                                                 labelId={`select-product-label-${order.id}`}
                                                 value={reviewInputs[order.id]?.product_id || ''}
-                                                onChange={(e) =>
-                                                  handleReviewInputChange(order.id, 'product_id', e.target.value as string)
-                                                }
-                                                label="Select Product"
+                                                onChange={(e) => handleReviewInputChange(order.id, 'product_id', e.target.value as string)}
                                                 displayEmpty
                                                 MenuProps={{ disableAutoFocusItem: true }}
+                                                renderValue={(selected) => {
+                                                  if (!selected) {
+                                                    return <em style={{ color: '#999' }}>Choose a product...</em>; 
+                                                  }
+                                                  return getProductName(selected); 
+                                                }}
                                                 sx={{
-                                                  backgroundColor: '#f9f9f9',
+                                                  bgcolor: '#f9f9f9',
                                                   borderRadius: 1,
-                                                  '.MuiSelect-select': { padding: '8px 12px' },
+                                                  minWidth: 220,
+                                                  '.MuiSelect-select': {
+                                                    p: '10px 14px',
+                                                  },
                                                 }}
                                               >
-                                                <MenuItem disabled value="">
-                                                  <em>Choose a product...</em>
-                                                </MenuItem>
                                                 {order.order_items.map((item: IOrderItem, idx: number) => (
                                                   <MenuItem key={`${orderKey}-dropdown-${item.product_id}-${idx}`} value={item.product_id}>
                                                     {getProductName(item.product_id)}
                                                   </MenuItem>
                                                 ))}
-
                                               </Select>
+
+
                                             </FormControl>
 
                                             <Box sx={{ display: 'flex', alignItems: 'center' }}>

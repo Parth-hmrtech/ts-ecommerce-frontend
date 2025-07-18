@@ -20,7 +20,6 @@ import useProductManager from '@/hooks/useProduct';
 const WishlistCard = memo(
   ({
     product,
-    productId,
     imageUrl,
     onCardClick,
     onDelete,

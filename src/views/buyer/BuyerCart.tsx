@@ -36,12 +36,11 @@ const BuyerCart: React.FC = () => {
     deleteCartByBuyerId,
     placeOrder,
   } = useBuyerCart();
-  console.log("Updated Cart ::", updatedCart);
 
   const [showPlaceOrder, setShowPlaceOrder] = useState(false);
   const [address, setAddress] = useState('');
   const [placingOrder, setPlacingOrder] = useState(false);
-  
+
   const handleUpdateQuantity = async (item: ICartItem, delta: number) => {
     const newQty = item.quantity + delta;
 
@@ -51,8 +50,6 @@ const BuyerCart: React.FC = () => {
       } else {
         await updateCartItem({ ...item, quantity: newQty });
       }
-
-      // await fetchCart(); 
     } catch (error) {
       console.error('Error updating cart item:', error);
     }

@@ -47,10 +47,11 @@ const { cart, updatedCart, loading, error } = useSelector(
     return dispatch(placeBuyerOrderAction(payload));
   };
 
-  useEffect(() => {
-    fetchCart();
-    fetchProducts();
-  }, []); 
+useEffect(() => {
+  fetchCart();
+  fetchProducts();
+}, []);
+
 
   return {
     cart,
