@@ -61,10 +61,7 @@ const fetchBuyerOrderByIdAction = createAsyncThunk<APISuccessResponse, string>(
   }
 );
 
-const updateBuyerOrderAddressAction = createAsyncThunk<
-  APISuccessResponse,
-  IOrderAddressUpdate
->(
+const updateBuyerOrderAddressAction = createAsyncThunk<APISuccessResponse,IOrderAddressUpdate>(
   'buyerOrder/updateBuyerOrderAddress',
   async ({ orderId, delivery_address }, thunkAPI) => {
     try {

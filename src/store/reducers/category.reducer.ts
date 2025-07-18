@@ -11,11 +11,12 @@ import {
   updateSubCategoryAction,
   deleteSubCategoryAction,
 } from '@/store/actions/category.action';
+import type { ICategory, ISubCategory } from '@/types/category.types';
 
 interface CategoryState {
-  list: any[];
-  subcategories: any[];
-  subcategoriesByCategory: any[];
+  list: ICategory[];
+  subcategories: ISubCategory[];
+  subcategoriesByCategory: ISubCategory[];
   loading: string;
   apiName: string;
   alertType: string;
@@ -63,7 +64,6 @@ const categorySlice = createSlice({
       .addCase(fetchAllCategoriesAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
@@ -81,7 +81,6 @@ const categorySlice = createSlice({
       .addCase(addCategoryAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
@@ -94,14 +93,13 @@ const categorySlice = createSlice({
         state.alertType = 'success';
         state.message = 'Category updated successfully';
         state.list = state.list.map((cat) =>
-          cat._id === payload._id ? payload : cat
+          cat.id === payload._id ? payload : cat
         );
         state.error = false;
       })
       .addCase(updateCategoryAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
@@ -113,13 +111,12 @@ const categorySlice = createSlice({
         state.loading = '';
         state.alertType = 'success';
         state.message = 'Category deleted successfully';
-        state.list = state.list.filter((cat) => cat._id !== payload);
+        state.list = state.list.filter((cat) => cat.id !== payload);
         state.error = false;
       })
       .addCase(deleteCategoryAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
@@ -137,7 +134,6 @@ const categorySlice = createSlice({
       .addCase(fetchBuyerCategoriesAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
@@ -155,7 +151,6 @@ const categorySlice = createSlice({
       .addCase(fetchAllSubCategoriesAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
@@ -173,7 +168,6 @@ const categorySlice = createSlice({
       .addCase(fetchAllSubCategoriesByIdAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
@@ -191,7 +185,6 @@ const categorySlice = createSlice({
       .addCase(addSubCategoryAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
@@ -204,14 +197,13 @@ const categorySlice = createSlice({
         state.alertType = 'success';
         state.message = 'Subcategory updated';
         state.subcategories = state.subcategories.map((sub) =>
-          sub._id === payload._id ? payload : sub
+          sub.id === payload._id ? payload : sub
         );
         state.error = false;
       })
       .addCase(updateSubCategoryAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
@@ -223,13 +215,12 @@ const categorySlice = createSlice({
         state.loading = '';
         state.alertType = 'success';
         state.message = 'Subcategory deleted';
-        state.subcategories = state.subcategories.filter((s) => s._id !== payload);
+        state.subcategories = state.subcategories.filter((s) => s.id !== payload);
         state.error = false;
       })
       .addCase(deleteSubCategoryAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       });
   },

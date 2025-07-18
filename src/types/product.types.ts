@@ -11,6 +11,8 @@ export interface IProduct {
   stock?: number;
   createdAt?: string;
   updatedAt?: string;
+  [key: string]: any;
+
 }
 
 export interface IWishlistItem {

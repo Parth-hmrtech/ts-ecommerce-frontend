@@ -6,8 +6,16 @@ import {
   deleteBuyerCartAction,
   deleteBuyerIdCartAction,
 } from '@/store/actions/cart.action';
-import type { BuyerCartState } from '@/types/cart.types';
 import type { ICartItem } from '@/types/cart.types';
+
+interface BuyerCartState {
+  cart: ICartItem[];
+  loading: string;
+  apiName: string;
+  alertType: string;
+  message: string;
+  error: boolean;
+}
 
 const initialState: BuyerCartState = {
   cart: [],
@@ -33,7 +41,6 @@ const buyerCartSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch cart
       .addCase(fetchBuyerCartAction.pending, (state) => {
         state.apiName = 'buyerCart/fetch';
         state.loading = 'buyerCart/fetch';
@@ -48,11 +55,9 @@ const buyerCartSlice = createSlice({
       .addCase(fetchBuyerCartAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
-      // Add to cart
       .addCase(addToBuyerCartAction.pending, (state) => {
         state.apiName = 'buyerCart/add';
         state.loading = 'buyerCart/add';
@@ -67,11 +72,9 @@ const buyerCartSlice = createSlice({
       .addCase(addToBuyerCartAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
-      // Update cart
       .addCase(updateBuyerCartAction.pending, (state) => {
         state.apiName = 'buyerCart/update';
         state.loading = 'buyerCart/update';
@@ -82,7 +85,6 @@ const buyerCartSlice = createSlice({
         state.message = payload.message;
 
         const updatedCart: ICartItem | undefined = payload?.data?.updatedCart;
-
         if (updatedCart && updatedCart.id) {
           state.cart = state.cart.map((item) =>
             item.id === updatedCart.id ? updatedCart : item
@@ -94,11 +96,9 @@ const buyerCartSlice = createSlice({
       .addCase(updateBuyerCartAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
-      // Delete single cart item
       .addCase(deleteBuyerCartAction.pending, (state) => {
         state.apiName = 'buyerCart/delete';
         state.loading = 'buyerCart/delete';
@@ -113,11 +113,9 @@ const buyerCartSlice = createSlice({
       .addCase(deleteBuyerCartAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       })
 
-      // Delete all items by buyer ID
       .addCase(deleteBuyerIdCartAction.pending, (state) => {
         state.apiName = 'buyerCart/deleteAll';
         state.loading = 'buyerCart/deleteAll';
@@ -132,7 +130,6 @@ const buyerCartSlice = createSlice({
       .addCase(deleteBuyerIdCartAction.rejected, (state, { payload }: any) => {
         state.loading = '';
         state.alertType = 'error';
-        state.error = true;
         if (payload) state.message = payload.message;
       });
   },

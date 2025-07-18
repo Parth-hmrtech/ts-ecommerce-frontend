@@ -9,7 +9,11 @@ export interface IReview {
   createdAt?: string;
   updatedAt?: string;
 }
-export type IReviewAdd = Required<Pick<
-  IReview,
-  'order_id' | 'product_id' | 'buyer_id' | 'seller_id' | 'rating' | 'comment'
->>;
+export type IReviewAdd = {
+  order_id: string;
+  product_id: string;
+  buyer_id: string;
+  seller_id: string;
+  rating: number;
+  comment: string;
+};

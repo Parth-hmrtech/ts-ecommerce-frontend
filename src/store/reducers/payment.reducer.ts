@@ -7,23 +7,20 @@ import {
   fetchSellerEarningsAction,
 } from '@/store/actions/payment.action';
 
-import type {
-  IPaymentResponse,
-  IPaymentStatus,
-  ISellerPayment,
-  ISellerEarning,
-} from '@/types/payment.types'; 
+import type { IPayment } from '@/types/payment.types';
+
 interface PaymentState {
-  buyerPayment: IPaymentResponse | null;
-  paymentStatus: IPaymentStatus | null;
-  sellerPayments: ISellerPayment[];
-  sellerEarnings: ISellerEarning[];
+  buyerPayment: IPayment | null;
+  paymentStatus: IPayment | null;
+  sellerPayments: IPayment[];
+  sellerEarnings: IPayment[];  
   loading: string;
   apiName: string;
   alertType: 'success' | 'error' | '';
   message: string;
   error: boolean;
 }
+
 
 const initialState: PaymentState = {
   buyerPayment: null,

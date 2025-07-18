@@ -11,11 +11,7 @@ import {
   addToBuyerWishlistAction,
   deleteFromBuyerWishlistAction,
 } from '@/store/actions/product.action';
-
-interface IProduct {
-  _id: string;
-  [key: string]: any;
-}
+import type { IProduct } from '@/types/product.types';
 
 interface IProductState {
   products: IProduct[];
