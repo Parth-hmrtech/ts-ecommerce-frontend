@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
 import type { IOrder, IOrderAddressUpdate, IOrderPayload } from '@/types/order.types';
+import { Login } from '@mui/icons-material';
 
 const getTokenHeader = () => {
   const token = localStorage.getItem('access_token');
@@ -117,11 +118,12 @@ const fetchSellerOrdersAction = createAsyncThunk<APISuccessResponse, void>(
 
 const updateOrderStatusAction = createAsyncThunk<APISuccessResponse, IOrder>(
   'orders/updateStatus',
-  async ({ orderId, status }, thunkAPI) => {
+  async ({ id, status }, thunkAPI) => {
     try {
+
       const response = await apiRequest({
         method: 'PUT',
-        url: `/seller/orders/${orderId}/status`,
+        url: `/seller/orders/${id}/status`,
         data: { status },
         headers: getTokenHeader(),
       });

@@ -24,7 +24,8 @@ export interface IOrderPayload {
   products: IOrderProduct[];
 }
 
-export  interface IOrderItem {
+export interface IOrderItem {
+  id: string;
   product_id: string;
   price: number;
   quantity: number;

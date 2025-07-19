@@ -31,8 +31,9 @@ import Sidebar from '@/components/common/Sidebar';
 import Footer from '@/components/common/Footer';
 
 import useSellerCategory from '@/hooks/useCategory';
+import type { ICategory, ISubCategory } from '@/types/category.types';
 
-const SellerSubCategory = () => {
+const SellerSubCategory: React.FC = () => {
   const {
     subCategories,
     subCategoryLoading,
@@ -45,17 +46,17 @@ const SellerSubCategory = () => {
     fetchCategories,
   } = useSellerCategory();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newSubCategoryName, setNewSubCategoryName] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [showAddForm, setShowAddForm] = useState<boolean>(false);
+  const [newSubCategoryName, setNewSubCategoryName] = useState<string>('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
 
-  const [editSubCategoryId, setEditSubCategoryId] = useState(null);
-  const [editSubCategoryName, setEditSubCategoryName] = useState('');
+  const [editSubCategoryId, setEditSubCategoryId] = useState<string | null>(null);
+  const [editSubCategoryName, setEditSubCategoryName] = useState<string>('');
 
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [subCategoryToDelete, setSubCategoryToDelete] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
+  const [subCategoryToDelete, setSubCategoryToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSubCategories();
@@ -69,65 +70,74 @@ const SellerSubCategory = () => {
   const handleAddSubCategory = () => {
     if (!newSubCategoryName.trim() || !selectedCategoryId) return;
 
-    addSubCategory(selectedCategoryId, newSubCategoryName)
+    addSubCategory({
+      category_id: selectedCategoryId,
+      sub_category_name: newSubCategoryName
+    })
       .unwrap()
       .then(() => {
         setNewSubCategoryName('');
         setSelectedCategoryId('');
         setShowAddForm(false);
+        fetchSubCategories();
+
       })
-      .catch((err) => console.error('Failed to add subcategory:', err));
+      .catch((err: any) => console.error('Failed to add subcategory:', err));
   };
 
-  const handleEditClick = (subcategory) => {
+  const handleEditClick = (subcategory: ISubCategory) => {
     setEditSubCategoryId(subcategory.id);
     setEditSubCategoryName(subcategory.sub_category_name);
   };
 
-  const handleEditSave = () => {
-    if (!editSubCategoryName.trim()) return;
+  const handleEditSave = async () => {
+    if (!editSubCategoryName.trim() || !editSubCategoryId) return;
 
-    updateSubCategory(editSubCategoryId, null, editSubCategoryName)
-      .unwrap()
-      .then(() => {
-        setEditSubCategoryId(null);
-        setEditSubCategoryName('');
-        dispatch(fetchSubCategories());
-      })
-      .catch((err) => console.error('Update failed:', err));
+    try {
+      await updateSubCategory({
+        id: editSubCategoryId,
+        sub_category_name: editSubCategoryName,
+      });
+
+      setEditSubCategoryId(null);
+      setEditSubCategoryName('');
+      fetchSubCategories();
+    } catch (err: any) {
+      console.error('Update failed:', err);
+    }
   };
+
 
   const handleEditCancel = () => {
     setEditSubCategoryId(null);
     setEditSubCategoryName('');
   };
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = (id: string) => {
     setSubCategoryToDelete(id);
     setConfirmOpen(true);
   };
 
   const confirmDelete = () => {
+    if (!subCategoryToDelete) return;
+
     deleteSubCategory(subCategoryToDelete)
-      .unwrap()
       .then(() => {
         setConfirmOpen(false);
         setSubCategoryToDelete(null);
         fetchSubCategories();
       })
-      .catch((err) => console.error('Delete failed:', err));
+      .catch((err: any) => console.error('Delete failed:', err));
   };
 
-  const filteredList = Array.isArray(subCategories)
-    ? subCategories.filter(
-      (sub) =>
-        sub?.sub_category_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredList: ISubCategory[] = Array.isArray(subCategories)
+    ? subCategories.filter((sub) =>
+      sub?.sub_category_name?.toLowerCase().includes(searchTerm.toLowerCase())
     )
     : [];
 
-
-  const getCategoryName = (id) => {
-    const category = categories.find((cat) => cat.id === id);
+  const getCategoryName = (id: string): string => {
+    const category = categories.find((cat: ICategory) => cat.id === id);
     return category ? category.category_name : '-';
   };
 
@@ -155,7 +165,7 @@ const SellerSubCategory = () => {
                   onChange={(e) => setSelectedCategoryId(e.target.value)}
                   label="Category"
                 >
-                  {categories.map((cat) => (
+                  {categories.map((cat: ICategory) => (
                     <MenuItem key={cat.id} value={cat.id}>
                       {cat.category_name}
                     </MenuItem>
@@ -222,7 +232,9 @@ const SellerSubCategory = () => {
                         )}
                       </TableCell>
                       <TableCell>{getCategoryName(sub.category_id)}</TableCell>
-                      <TableCell>{new Date(sub.createdAt).toLocaleString()}</TableCell>
+                      <TableCell>
+                        {sub.createdAt ? new Date(sub.createdAt).toLocaleString() : 'N/A'}
+                      </TableCell>
                       <TableCell>{sub.updatedAt ? new Date(sub.updatedAt).toLocaleString() : '-'}</TableCell>
                       <TableCell align="right">
                         {editSubCategoryId === sub.id ? (

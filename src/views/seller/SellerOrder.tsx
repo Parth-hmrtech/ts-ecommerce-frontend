@@ -13,9 +13,8 @@ import {
   IconButton,
   Select,
   MenuItem,
-  CircularProgress,
 } from '@mui/material';
-
+import type { SelectChangeEvent } from '@mui/material/Select';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
@@ -24,10 +23,12 @@ import Footer from '@/components/common/Footer';
 import Sidebar from '@/components/common/Sidebar';
 
 import useSellerOrder from '@/hooks/useOrder';
+import type { IOrder } from '@/types/order.types';
+import type { IProduct } from '@/types/product.types';
 
-const SellerOrderList = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [openRowIndex, setOpenRowIndex] = useState(null);
+const SellerOrderList: React.FC = () => {
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [openRowIndex, setOpenRowIndex] = useState<number | null>(null);
 
   const {
     sellerOrders,
@@ -37,9 +38,9 @@ const SellerOrderList = () => {
     updateOrderStatus,
   } = useSellerOrder();
 
-  const orders = sellerOrders;
-  const loading = sellerOrders.loading || false;
-  const productList = sellerProducts;
+  const orders: IOrder[] = sellerOrders || [];
+  const productList: IProduct[] = sellerProducts || [];
+
   useEffect(() => {
     fetchSellerOrders();
     fetchSellerProducts();
@@ -49,29 +50,28 @@ const SellerOrderList = () => {
     setSidebarOpen((prev) => !prev);
   };
 
-  const toggleRow = (index) => {
+  const toggleRow = (index: number) => {
     setOpenRowIndex(openRowIndex === index ? null : index);
   };
 
-  const getProductName = (productId) => {
+  const getProductName = (productId: string): string => {
     const product = productList.find((p) => p.id === productId);
     return product ? product.product_name : 'Unknown Product';
   };
 
-  const getProductPrice = (productId) => {
+  const getProductPrice = (productId: string): number => {
     const product = productList.find((p) => p.id === productId);
     return product?.price || 0;
   };
 
-  const handleStatusChange = async (orderId, newStatus) => {
-  try {
-    await updateOrderStatus(orderId, newStatus); 
-    await fetchSellerOrders(); 
-  } catch (error) {
-    console.error('Failed to update order status:', error);
-  }
-};
-
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    try {      
+      await updateOrderStatus({ id: orderId, status: newStatus } as IOrder);
+      await fetchSellerOrders();
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+    }
+  };
 
   const sellerProductIds = productList.map((product) => product.id);
 
@@ -87,42 +87,39 @@ const SellerOrderList = () => {
             Seller Orders
           </Typography>
 
-          {loading ? (
-            <Box display="flex" justifyContent="center" my={4}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead sx={{ backgroundColor: '#f0f0f0' }}>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell>Order ID</TableCell>
-                    <TableCell>Address</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Total (Your Products)</TableCell>
-                    <TableCell>Order Date</TableCell>
-                    <TableCell>Change Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {orders
-                    .filter((order) =>
-                      order.order_items?.some((item) =>
-                        sellerProductIds.includes(item.product_id)
-                      )
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead sx={{ backgroundColor: '#f0f0f0' }}>
+                <TableRow>
+                  <TableCell />
+                  <TableCell>Order ID</TableCell>
+                  <TableCell>Address</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Total (Your Products)</TableCell>
+                  <TableCell>Order Date</TableCell>
+                  <TableCell>Change Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {orders
+                  .filter((order) =>
+                    order.order_items?.some((item) =>
+                      sellerProductIds.includes(item.product_id)
                     )
-                    .map((order, index) => {
-                      const sellerItems = order.order_items.filter((item) =>
-                        sellerProductIds.includes(item.product_id)
-                      );
+                  )
+                  .map((order, index) => {
+                    const sellerItems = order.order_items.filter((item) =>
+                      sellerProductIds.includes(item.product_id)
+                    );
 
-                      const sellerTotal = sellerItems.reduce((total, item) => {
-                        const price = getProductPrice(item.product_id);
-                        return total + price * item.quantity;
-                      }, 0);
-                      return [
-                        <TableRow key={`${order.id}-main`}>
+                    const sellerTotal = sellerItems.reduce((total, item) => {
+                      const price = getProductPrice(item.product_id);
+                      return total + price * item.quantity;
+                    }, 0);
+
+                    return (
+                      <React.Fragment key={order.id}>
+                        <TableRow>
                           <TableCell>
                             <IconButton size="small" onClick={() => toggleRow(index)}>
                               {openRowIndex === index ? (
@@ -135,7 +132,6 @@ const SellerOrderList = () => {
 
                           <TableCell>{order.id}</TableCell>
                           <TableCell>{order.delivery_address}</TableCell>
-
                           <TableCell>
                             <Typography
                               variant="body2"
@@ -146,24 +142,25 @@ const SellerOrderList = () => {
                                   order.status === 'pending'
                                     ? 'orange'
                                     : order.status === 'delivered'
-                                      ? 'green'
-                                      : order.status === 'cancelled'
-                                        ? 'red'
-                                        : 'black',
+                                    ? 'green'
+                                    : order.status === 'cancelled'
+                                    ? 'red'
+                                    : 'black',
                               }}
                             >
                               {order.status}
                             </Typography>
                           </TableCell>
-
                           <TableCell>₹{sellerTotal.toFixed(2)}</TableCell>
                           <TableCell>{new Date(order.order_date).toLocaleString()}</TableCell>
-
                           <TableCell>
                             <Select
                               size="small"
                               value={order.status?.toLowerCase() || 'pending'}
-                              onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                              onChange={(e: SelectChangeEvent<string>) =>
+                                handleStatusChange(order.id, e.target.value)
+                              }
+                              
                             >
                               <MenuItem value="pending">Pending</MenuItem>
                               <MenuItem value="accepted">Accepted</MenuItem>
@@ -172,9 +169,9 @@ const SellerOrderList = () => {
                               <MenuItem value="cancelled">Cancelled</MenuItem>
                             </Select>
                           </TableCell>
-                        </TableRow>,
+                        </TableRow>
 
-                        <TableRow key={`${order.id}-collapse`}>
+                        <TableRow>
                           <TableCell colSpan={7} sx={{ paddingBottom: 0, paddingTop: 0 }}>
                             <Collapse in={openRowIndex === index} timeout="auto" unmountOnExit>
                               <Box sx={{ margin: 1 }}>
@@ -192,7 +189,7 @@ const SellerOrderList = () => {
                                   </TableHead>
                                   <TableBody>
                                     {sellerItems.map((item) => (
-                                      <TableRow key={item.id}>
+                                      <TableRow key={item.product_id}>
                                         <TableCell>{item.product_id}</TableCell>
                                         <TableCell>{getProductName(item.product_id)}</TableCell>
                                         <TableCell>₹{getProductPrice(item.product_id)}</TableCell>
@@ -204,14 +201,13 @@ const SellerOrderList = () => {
                               </Box>
                             </Collapse>
                           </TableCell>
-                        </TableRow>,
-                      ];
-
-                    })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
+                        </TableRow>
+                      </React.Fragment>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Box>
       </Box>
 

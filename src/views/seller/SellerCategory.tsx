@@ -19,7 +19,6 @@ import {
   DialogActions,
   TableSortLabel
 } from '@mui/material';
-
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -28,33 +27,42 @@ import Footer from '@/components/common/Footer';
 import Sidebar from '@/components/common/Sidebar';
 
 import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '@/store';
 import {
   fetchAllCategoriesAction,
   addCategoryAction,
   deleteCategoryAction,
   updateCategoryAction,
 } from '@/store/actions/category.action';
+import type { ICategory } from '@/types/category.types';
 
 import useSellerCategory from '@/hooks/useCategory';
 
-const SellerCategory = () => {
-  const dispatch = useDispatch();
+interface Category {
+  id: string;
+  category_name: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+const SellerCategory: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const {
     categories: list = [],
     categoryLoading: loading,
     categoryError: error,
   } = useSellerCategory();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [editCategoryId, setEditCategoryId] = useState(null);
-  const [editCategoryName, setEditCategoryName] = useState('');
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [categoryToDelete, setCategoryToDelete] = useState(null);
-  const [sortField, setSortField] = useState('createdAt');
-  const [sortDirection, setSortDirection] = useState('desc');
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [showAddForm, setShowAddForm] = useState<boolean>(false);
+  const [newCategoryName, setNewCategoryName] = useState<string>('');
+  const [editCategoryId, setEditCategoryId] = useState<string | null>(null);
+  const [editCategoryName, setEditCategoryName] = useState<string>('');
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<keyof Category>('createdAt');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     dispatch(fetchAllCategoriesAction());
@@ -66,6 +74,7 @@ const SellerCategory = () => {
 
   const handleAddCategory = () => {
     if (!newCategoryName.trim()) return;
+
     dispatch(addCategoryAction({ category_name: newCategoryName }))
       .unwrap()
       .then(() => {
@@ -75,14 +84,13 @@ const SellerCategory = () => {
       })
       .catch((err) => console.error('Failed to add category:', err));
   };
-
-  const handleEditClick = (category) => {
+  const handleEditClick = (category: ICategory): void => {
     setEditCategoryId(category.id);
     setEditCategoryName(category.category_name);
   };
 
   const handleEditSave = () => {
-    if (!editCategoryName.trim()) return;
+    if (!editCategoryName.trim() || !editCategoryId) return;
     dispatch(updateCategoryAction({ id: editCategoryId, category_name: editCategoryName }))
       .unwrap()
       .then(() => {
@@ -98,7 +106,7 @@ const SellerCategory = () => {
     setEditCategoryName('');
   };
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = (id: string) => {
     setCategoryToDelete(id);
     setConfirmOpen(true);
   };
@@ -112,30 +120,36 @@ const SellerCategory = () => {
         setConfirmOpen(false);
         setCategoryToDelete(null);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error('Delete failed:', err);
         alert(`Delete failed: ${err.message || err}`);
       });
   };
 
-  const handleSort = (field) => {
+  const handleSort = (field: keyof Category) => {
     const isAsc = sortField === field && sortDirection === 'asc';
     setSortField(field);
     setSortDirection(isAsc ? 'desc' : 'asc');
   };
 
-  const filteredList = list
-    .filter((category) =>
-      category.category_name?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      const aVal = a[sortField] || '';
-      const bVal = b[sortField] || '';
-      const normalizedA = typeof aVal === 'string' ? aVal.toLowerCase() : new Date(aVal);
-      const normalizedB = typeof bVal === 'string' ? bVal.toLowerCase() : new Date(bVal);
-      return (normalizedA < normalizedB ? -1 : normalizedA > normalizedB ? 1 : 0) *
-        (sortDirection === 'asc' ? 1 : -1);
-    });
+  const filteredList = Array.isArray(list)
+  ? list
+      .filter((category) =>
+        category.category_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .sort((a, b) => {
+        const aVal = a[sortField] || '';
+        const bVal = b[sortField] || '';
+        const normalizedA =
+          typeof aVal === 'string' ? aVal.toLowerCase() : new Date(aVal).getTime();
+        const normalizedB =
+          typeof bVal === 'string' ? bVal.toLowerCase() : new Date(bVal).getTime();
+
+        if (normalizedA < normalizedB) return sortDirection === 'asc' ? -1 : 1;
+        if (normalizedA > normalizedB) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      })
+  : [];
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
@@ -184,7 +198,7 @@ const SellerCategory = () => {
             <CircularProgress />
           ) : error ? (
             <Typography color="error">{error}</Typography>
-          ) : filteredList.length === 0 ? (
+          ) : !Array.isArray(filteredList) || filteredList.length === 0 ? (
             <Typography>No matching categories found.</Typography>
           ) : (
             <TableContainer component={Paper}>
@@ -238,7 +252,7 @@ const SellerCategory = () => {
                         )}
                       </TableCell>
                       <TableCell>
-                        {new Date(category.createdAt).toLocaleString()}
+                        {category.createdAt ? new Date(category.createdAt).toLocaleString() : 'N/A'}
                       </TableCell>
                       <TableCell>
                         {category.updatedAt

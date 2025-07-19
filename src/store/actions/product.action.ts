@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IProduct, IWishlistAdd } from '@/types/product.types';
+import type { IAddProduct, IProduct, IWishlistAdd } from '@/types/product.types';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('access_token');
@@ -112,6 +112,8 @@ const fetchAllProductsAction = createAsyncThunk<APISuccessResponse, void>(
         url: '/seller/products',
         headers: getAuthHeaders(),
       });
+      console.log(response);
+      
       return thunkAPI.fulfillWithValue(response.data?.data || []);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -121,7 +123,7 @@ const fetchAllProductsAction = createAsyncThunk<APISuccessResponse, void>(
   }
 );
 
-const addProductAction = createAsyncThunk<APISuccessResponse, IProduct>(
+const addProductAction = createAsyncThunk<APISuccessResponse, IAddProduct>(
   'products/add',
   async (data, thunkAPI) => {
     try {
@@ -145,6 +147,9 @@ const updateProductAction = createAsyncThunk<APISuccessResponse, IProduct>(
   'products/update',
   async ({ id, ...productData }, thunkAPI) => {
     try {
+      console.log(id);
+      console.log(productData);
+      
       const response = await apiRequest({
         method: 'PUT',
         url: `/seller/products/${id}`,

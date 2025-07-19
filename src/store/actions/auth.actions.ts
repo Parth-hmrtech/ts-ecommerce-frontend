@@ -42,10 +42,7 @@ const signInUserAction = createAsyncThunk<APISuccessResponse, ISign>(
   }
 );
 
-const forgotPasswordAction = createAsyncThunk<
-  APISuccessResponse,
-  { email: string; role: string }
->(
+const forgotPasswordAction = createAsyncThunk<APISuccessResponse,  { email: string; role: string }>(
   'auth/forgotPassword',
   async ({ email, role }, thunkAPI) => {
     try {

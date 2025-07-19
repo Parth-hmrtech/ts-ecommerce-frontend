@@ -20,8 +20,14 @@ import Sidebar from '@/components/common/Sidebar';
 import Footer from '@/components/common/Footer';
 
 import useSellerProduct from '@/hooks/useProduct';
+import type { IProduct } from '@/types/product.types';
 
-const NextArrow = ({ onClick }) => (
+
+interface ArrowProps {
+    onClick?: () => void;
+}
+
+const NextArrow: React.FC<ArrowProps> = ({ onClick }) => (
     <Box
         onClick={onClick}
         sx={{
@@ -46,7 +52,7 @@ const NextArrow = ({ onClick }) => (
     </Box>
 );
 
-const PrevArrow = ({ onClick }) => (
+const PrevArrow: React.FC<ArrowProps> = ({ onClick }) => (
     <Box
         onClick={onClick}
         sx={{
@@ -85,7 +91,7 @@ const sliderSettings = {
     arrows: true,
 };
 
-const SellerProductImages = () => {
+const SellerProductImages: React.FC = () => {
     const {
         fetchSellerProducts,
         uploadProductImage,
@@ -93,20 +99,15 @@ const SellerProductImages = () => {
         sellerLoading,
         sellerError,
     } = useSellerProduct();
-    const loading = sellerLoading;
-    const error = sellerError;
 
-    const products = sellerProducts;
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [file, setFile] = useState(null);
-    const [productId, setProductId] = useState('');
-    const [visibleCount, setVisibleCount] = useState(20);
+    const [file, setFile] = useState<File[] | null>(null);
+    const [productId, setProductId] = useState<string>('');
+    const [visibleCount, setVisibleCount] = useState<number>(20);
 
-    useEffect(() => {
-        fetchSellerProducts();
-    }, []);
+    
 
-    const handleToggleSidebar = () => setSidebarOpen((o) => !o);
+    const handleToggleSidebar = () => setSidebarOpen((prev) => !prev);
 
     const handleUpload = () => {
         if (!file || !productId || file.length === 0) return;
@@ -118,15 +119,21 @@ const SellerProductImages = () => {
         uploadProductImage(fd)
             .then(() => {
                 setFile(null);
-                document.querySelector('input[type="file"]').value = '';
-                fetchSellerProducts();
+                const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+                if (input) input.value = '';
             })
             .catch((err) => {
                 console.error('Image upload failed:', err);
             });
     };
 
-    const displayProducts = products.slice(0, visibleCount);
+    const user = localStorage.getItem('user');
+    const currentSellerId = user ? JSON.parse(user)?.id : '';
+
+    const displayProducts: IProduct[] = Array.isArray(sellerProducts)
+        ? sellerProducts.filter((p) => String(p.seller_id) === currentSellerId)
+        : [];
+
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -148,7 +155,7 @@ const SellerProductImages = () => {
                                 label="Select Product"
                                 onChange={(e) => setProductId(e.target.value)}
                             >
-                                {products.map((p) => {
+                                {displayProducts.map((p: IProduct) => {
                                     let thumb = '';
                                     try {
                                         const arr = JSON.parse(p.image_url || '[]');
@@ -178,7 +185,9 @@ const SellerProductImages = () => {
                             type="file"
                             accept="image/*"
                             multiple
-                            onChange={(e) => setFile(Array.from(e.target.files))}
+                            onChange={(e) =>
+                                setFile(e.target.files ? Array.from(e.target.files) : null)
+                            }
                         />
 
                         <Button
@@ -190,7 +199,7 @@ const SellerProductImages = () => {
                         </Button>
                     </Box>
 
-                    {loading ? (
+                    {sellerLoading ? (
                         <Box
                             sx={{
                                 display: 'flex',
@@ -201,8 +210,8 @@ const SellerProductImages = () => {
                         >
                             <CircularProgress />
                         </Box>
-                    ) : error ? (
-                        <Typography color="error">{error}</Typography>
+                    ) : sellerError ? (
+                        <Typography color="error">{sellerError}</Typography>
                     ) : (
                         <>
                             <Box
@@ -212,16 +221,20 @@ const SellerProductImages = () => {
                                     gap: 2,
                                 }}
                             >
-                                {displayProducts.map((p) => {
-                                    let imgs = [];
+                                {displayProducts.map((p: IProduct) => {
+                                    let imgs: string[] = [];
                                     try {
                                         const parsed = JSON.parse(p.image_url || '[]');
+
                                         imgs = Array.isArray(parsed)
-                                            ? parsed.map((o) => o.image_url || o)
-                                            : [parsed];
+                                            ? parsed
+                                                .map((o: any) => (typeof o === 'string' ? o : o?.image_url ?? ''))
+                                                .filter((url: string) => url !== '')
+                                            : [parsed].filter((url: any) => typeof url === 'string');
                                     } catch {
-                                        imgs = [p.image_url];
+                                        imgs = [p.image_url ?? ''];
                                     }
+
                                     return (
                                         <Card
                                             key={p.id}
@@ -310,7 +323,7 @@ const SellerProductImages = () => {
                                 })}
                             </Box>
 
-                            {visibleCount < products.length && (
+                            {visibleCount < sellerProducts.length && (
                                 <Box display="flex" justifyContent="center" mt={3}>
                                     <Button
                                         variant="outlined"

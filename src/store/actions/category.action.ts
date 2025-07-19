@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { ICategory, ISubCategory } from '@/types/category.types';
+import type { ICategory,IAddCategory, ISubCategory, IAddSubCategory, IUpdateSubCategory } from '@/types/category.types';
 
 const getHeaders = () => {
   const token = localStorage.getItem('access_token');
@@ -41,7 +41,7 @@ const fetchAllCategoriesAction = createAsyncThunk<APISuccessResponse, void>(
   }
 );
 
-const addCategoryAction = createAsyncThunk<APISuccessResponse, ICategory>(
+const addCategoryAction = createAsyncThunk<APISuccessResponse, IAddCategory>(
   'categories/add',
   async (data, thunkAPI) => {
     try {
@@ -116,6 +116,8 @@ const fetchAllSubCategoriesByIdAction = createAsyncThunk<APISuccessResponse, str
         url: `/seller/subcategories/${categoryId}`,
         headers: getHeaders(),
       });
+      console.log("from category",response);
+      
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(new Error(error?.response?.data?.message || 'Something is wrong here'));
@@ -123,7 +125,7 @@ const fetchAllSubCategoriesByIdAction = createAsyncThunk<APISuccessResponse, str
   }
 );
 
-const addSubCategoryAction = createAsyncThunk<APISuccessResponse, ISubCategory>(
+const addSubCategoryAction = createAsyncThunk<APISuccessResponse, IAddSubCategory>(
   'subcategories/add',
   async (data, thunkAPI) => {
     try {
@@ -140,7 +142,7 @@ const addSubCategoryAction = createAsyncThunk<APISuccessResponse, ISubCategory>(
   }
 );
 
-const updateSubCategoryAction = createAsyncThunk<APISuccessResponse, ISubCategory>(
+const updateSubCategoryAction = createAsyncThunk<APISuccessResponse, IUpdateSubCategory>(
   'subcategories/update',
   async ({ id, sub_category_name }, thunkAPI) => {
     try {

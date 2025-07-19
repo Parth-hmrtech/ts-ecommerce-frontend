@@ -14,6 +14,24 @@ export interface IProduct {
   [key: string]: any;
 
 }
+export interface IAddProduct {
+  product_name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  category_id: string;
+  subcategory_id: string;
+}
+
+export interface IUpdateProduct {
+  id: string; 
+  product_name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  category_id: string;
+  subcategory_id: string;
+}
 
 export interface IWishlistItem {
   id: string;

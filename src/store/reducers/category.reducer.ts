@@ -58,7 +58,7 @@ const categorySlice = createSlice({
         state.loading = '';
         state.alertType = 'success';
         state.message = 'Categories fetched successfully';
-        state.list = payload || [];
+        state.list = payload.data || [];
         state.error = false;
       })
       .addCase(fetchAllCategoriesAction.rejected, (state, { payload }: any) => {
@@ -145,7 +145,7 @@ const categorySlice = createSlice({
         state.loading = '';
         state.alertType = 'success';
         state.message = 'Subcategories fetched';
-        state.subcategories = payload || [];
+        state.subcategories = payload.data || [];
         state.error = false;
       })
       .addCase(fetchAllSubCategoriesAction.rejected, (state, { payload }: any) => {
@@ -160,7 +160,7 @@ const categorySlice = createSlice({
       })
       .addCase(fetchAllSubCategoriesByIdAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.subcategoriesByCategory = payload || [];
+        state.subcategoriesByCategory = payload.data || [];
         state.alertType = 'success';
         state.message = 'Subcategories by category fetched';
         state.error = false;

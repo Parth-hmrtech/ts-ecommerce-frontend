@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import type { ReactNode } from 'react';
+
 import {
   Box,
   Typography,
@@ -18,8 +20,25 @@ import Sidebar from '@/components/common/Sidebar';
 
 import useSellerDashboard from '@/hooks/useSellerDashboard';
 
-const SellerDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+interface StatCardProps {
+  icon: ReactNode;
+  title: string;
+  value: string | number;
+  bg: string;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ icon, title, value, bg }) => (
+  <Card sx={{ p: 2, textAlign: 'center', backgroundColor: bg, borderRadius: 3 }}>
+    <Box display="flex" justifyContent="center" mb={1}>
+      {icon}
+    </Box>
+    <Typography variant="subtitle1">{title}</Typography>
+    <Typography variant="h5" fontWeight="bold">{value}</Typography>
+  </Card>
+);
+
+const SellerDashboard: React.FC = () => {
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   const {
     isLoading,
@@ -33,16 +52,6 @@ const SellerDashboard = () => {
   const handleToggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
-
-  const StatCard = ({ icon, title, value, bg }) => (
-    <Card sx={{ p: 2, textAlign: 'center', backgroundColor: bg, borderRadius: 3 }}>
-      <Box display="flex" justifyContent="center" mb={1}>
-        {icon}
-      </Box>
-      <Typography variant="subtitle1">{title}</Typography>
-      <Typography variant="h5" fontWeight="bold">{value}</Typography>
-    </Card>
-  );
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>

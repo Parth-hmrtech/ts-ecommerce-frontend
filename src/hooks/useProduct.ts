@@ -36,7 +36,7 @@ import {
 } from '@/store/actions/category.action';
 
 import type { ICartAdd, ICartUpdate } from '@/types/cart.types';
-import type { IProduct, IWishlistAdd } from '@/types/product.types';
+import type { IAddProduct, IProduct, IWishlistAdd } from '@/types/product.types';
 import type { IReview } from '@/types/review.types';
 
 const useProductManager = (productId?: string) => {
@@ -123,7 +123,7 @@ const useProductManager = (productId?: string) => {
 
   const fetchSellerProducts = fetchAllProducts;
 
-  const addSellerProduct = async (payload: IProduct) => {
+  const addSellerProduct = async (payload: IAddProduct) => {
     return await dispatch(addProductAction(payload));
   };
 

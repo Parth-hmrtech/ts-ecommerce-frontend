@@ -8,11 +8,12 @@ import {
   fetchSellerOrdersAction,
   updateOrderStatusAction,
 } from '@/store/actions/order.action';
+import type { IOrder } from '@/types/order.types';
 
 interface OrderState {
-  buyerOrders: any[];
-  buyerOrderDetail: any | null;
-  sellerOrders: any[];
+  buyerOrders: IOrder[];
+  buyerOrderDetail: IOrder | null;
+  sellerOrders: IOrder[];
   loading: string;
   apiName: string;
   alertType: string;
@@ -102,7 +103,7 @@ const orderSlice = createSlice({
         state.alertType = 'success';
         state.message = 'Address updated';
         state.buyerOrders = state.buyerOrders.map((order) =>
-          order._id === payload._id ? payload : order
+          order.id === payload.id ? payload : order
         );
       })
       .addCase(updateBuyerOrderAddressAction.rejected, (state, { payload }: any) => {
@@ -119,7 +120,7 @@ const orderSlice = createSlice({
         state.loading = '';
         state.alertType = 'success';
         state.message = 'Order deleted';
-        state.buyerOrders = state.buyerOrders.filter((o) => o._id !== payload._id);
+        state.buyerOrders = state.buyerOrders.filter((o) => o.id !== payload._id);
       })
       .addCase(deleteBuyerOrderAction.rejected, (state, { payload }: any) => {
         state.loading = '';
@@ -133,7 +134,7 @@ const orderSlice = createSlice({
       })
       .addCase(fetchSellerOrdersAction.fulfilled, (state, { payload }: any) => {
         state.loading = '';
-        state.sellerOrders = payload;
+        state.sellerOrders = payload.data;
         state.alertType = 'success';
         state.message = 'Seller orders fetched';
       })
@@ -152,7 +153,7 @@ const orderSlice = createSlice({
         state.alertType = 'success';
         state.message = 'Order status updated';
         state.sellerOrders = state.sellerOrders.map((order) =>
-          order._id === payload._id ? payload : order
+          order.id === payload.id ? payload : order
         );
       })
       .addCase(updateOrderStatusAction.rejected, (state, { payload }: any) => {

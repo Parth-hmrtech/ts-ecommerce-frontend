@@ -12,12 +12,12 @@ import BuyerOrders from "@/pages/buyer/buyerOrder";
 import BuyerWishlist from "@/pages/buyer/buyerWishlist";
 import BuyerProfile from "@/pages/buyer/buyerProfile";
 
-// import SellerDashboard from "../pages/seller/sellerDashboard";
-// import SellerCategory from "../views/seller/SellerCategory";
-// import SellerSubCategory from "../views/seller/SellerSubCategory";
-// import SellerProducts from "../views/seller/SellerProduct";
-// import SellerOrderList from "../views/seller/SellerOrder";
-// import SellerProductImages from "../views/seller/SellerProductUploadImage";
+import SellerDashboard from "@/pages/seller/sellerDashboard";
+import SellerCategory from "@/pages/seller/sellerCategory";
+import SellerSubCategory from "@/pages/seller/sellerSubCategory";
+import SellerProducts from "@/pages/seller/sellerProduct";
+import SellerOrderList from "@/pages/seller/sellerOrder";
+import SellerProductImages from "@/pages/seller/sellerProductUploadImage";
 // import SellerPayments from "../views/seller/SellerPayment";
 // import SellerReview from "../views/seller/SellerReview";
 // import SellerProfile from "../views/seller/SellerProfile";
@@ -75,7 +75,7 @@ const AppRoutes = createBrowserRouter([
   
 
   // Seller routes (disabled for now)
-  /*
+  
   {
     element: <ProtectedRoute requiredRole="seller" />,
     children: [
@@ -103,21 +103,21 @@ const AppRoutes = createBrowserRouter([
         path: "/seller-dashboard/orders",
         element: <SellerOrderList />,
       },
-      {
-        path: "/seller-dashboard/payments",
-        element: <SellerPayments />,
-      },
-      {
-        path: "/seller-dashboard/reviews",
-        element: <SellerReview />,
-      },
-      {
-        path: "/seller-dashboard/profile",
-        element: <SellerProfile />,
-      },
+      // {
+      //   path: "/seller-dashboard/payments",
+      //   element: <SellerPayments />,
+      // },
+      // {
+      //   path: "/seller-dashboard/reviews",
+      //   element: <SellerReview />,
+      // },
+      // {
+      //   path: "/seller-dashboard/profile",
+      //   element: <SellerProfile />,
+      // },
     ],
   },
-  */
+  
 ]);
 
 export default AppRoutes;

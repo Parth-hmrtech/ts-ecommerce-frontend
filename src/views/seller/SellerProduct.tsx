@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -23,14 +22,20 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material/Select';
+
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import Sidebar from '@/components/common/Sidebar';
-import useSellerProduct from '@/hooks/useProduct';
 
-const SellerProduct = () => {
+import useSellerProduct from '@/hooks/useProduct';
+import type { IAddProduct, IProduct, IUpdateProduct } from '@/types/product.types';
+import type { ICategory, ISubCategory } from '@/types/category.types';
+
+const SellerProduct: React.FC = () => {
   const {
     fetchSellerProducts,
     addSellerProduct,
@@ -44,16 +49,18 @@ const SellerProduct = () => {
     sellerLoading,
     sellerError,
   } = useSellerProduct();
+
   const loading = sellerLoading;
   const error = sellerError;
 
-  const products = sellerProducts;
-  const categories = sellerCategories;
-  const subcategories = sellerSubcategories;
+  const products: IProduct[] = sellerProducts;
+  const categories: ICategory[] = sellerCategories;
+  const subcategories: ISubCategory[] = sellerSubcategories;
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<IProduct, 'id' | 'createdAt' | 'updatedAt'>>({
     product_name: '',
     description: '',
     price: '',
@@ -62,22 +69,27 @@ const SellerProduct = () => {
     subcategory_id: '',
   });
 
-  const [editId, setEditId] = useState(null);
-  const [editData, setEditData] = useState({});
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editData, setEditData] = useState<Partial<IProduct>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState(null);
-  const [expandedDescriptions, setExpandedDescriptions] = useState({});
+  const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    fetchSellerProducts();
+    // fetchSellerProducts();
     fetchSellerCategories();
   }, []);
 
   useEffect(() => {
     if (formData.category_id) {
       fetchSellerSubcategoriesByCategoryId(formData.category_id).then((res) => {
-        const subList = res?.payload || [];
-        if (!subList.some((sub) => sub.id === formData.subcategory_id)) {
+        const subList = Array.isArray(res?.payload) ? (res.payload as ISubCategory[]) : [];
+
+        const isSubcategoryValid = subList.some(
+          (sub: ISubCategory) => sub.id === formData.subcategory_id
+        );
+
+        if (!isSubcategoryValid) {
           setFormData((prev) => ({ ...prev, subcategory_id: '' }));
         }
       });
@@ -89,14 +101,7 @@ const SellerProduct = () => {
   const handleToggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   const handleAdd = () => {
-    const {
-      product_name,
-      price,
-      description,
-      quantity,
-      category_id,
-      subcategory_id,
-    } = formData;
+    const { product_name, price, description, quantity, category_id, subcategory_id } = formData;
 
     if (
       !product_name.trim() ||
@@ -105,13 +110,17 @@ const SellerProduct = () => {
       !quantity ||
       !category_id ||
       !subcategory_id
-    )
+    ) {
       return;
+    }
 
-    const payload = {
-      ...formData,
+    const payload: IAddProduct = {
+      product_name: product_name.trim(),
+      description: description.trim(),
       price: parseFloat(price),
-      quantity: parseInt(quantity),
+      quantity: parseInt(quantity, 10),
+      category_id,
+      subcategory_id,
     };
 
     addSellerProduct(payload).then(() => {
@@ -124,26 +133,43 @@ const SellerProduct = () => {
         subcategory_id: '',
       });
       setShowAddForm(false);
-      fetchSellerProducts();
     });
   };
 
-  const handleEditClick = (product) => {
+  const handleEditClick = (product: IProduct) => {
     setEditId(product.id);
     setEditData(product);
   };
 
   const handleEditSave = () => {
-    const updatedPayload = {
-      ...editData,
-      price: parseFloat(editData.price),
-      quantity: parseInt(editData.quantity),
+    if (!editId) return;
+
+    const { product_name, description, price, quantity, category_id, subcategory_id } = editData;
+
+    if (
+      !product_name?.trim() ||
+      !description?.trim() ||
+      !price ||
+      !quantity ||
+      !category_id ||
+      !subcategory_id
+    ) {
+      return;
+    }
+
+    const updatedPayload: IUpdateProduct = {
+      id: String(editId),
+      product_name: product_name.trim(),
+      description: description.trim(),
+      price: parseFloat(String(price)),
+      quantity: parseInt(String(quantity), 10),
+      category_id: String(category_id),
+      subcategory_id: String(subcategory_id),
     };
 
     updateSellerProduct(updatedPayload).then(() => {
       setEditId(null);
       setEditData({});
-      fetchSellerProducts();
     });
   };
 
@@ -152,29 +178,31 @@ const SellerProduct = () => {
     setEditData({});
   };
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = (id: string) => {
     setProductToDelete(id);
     setConfirmOpen(true);
   };
 
   const confirmDelete = () => {
+    if (!productToDelete) return;
     deleteSellerProduct(productToDelete).then(() => {
       setConfirmOpen(false);
       setProductToDelete(null);
-      fetchSellerProducts();
     });
   };
 
-  const toggleDescription = (id) => {
+  const toggleDescription = (id: string) => {
     setExpandedDescriptions((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
   };
-
-  const filteredList = Array.isArray(products)
+  const user = localStorage.getItem("user");
+  const currentSellerId = user ? JSON.parse(user)?.id : '';
+  const filteredList: IProduct[] = Array.isArray(products)
     ? products.filter((p) =>
-      p.product_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      p.product_name?.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      String(p.seller_id) === currentSellerId
     )
     : [];
 
@@ -198,7 +226,7 @@ const SellerProduct = () => {
                 <Select
                   value={formData.category_id}
                   label="Category"
-                  onChange={(e) =>
+                  onChange={(e: SelectChangeEvent) =>
                     setFormData({ ...formData, category_id: e.target.value, subcategory_id: '' })
                   }
                 >
@@ -215,12 +243,12 @@ const SellerProduct = () => {
                 <Select
                   value={formData.subcategory_id}
                   label="Subcategory"
-                  onChange={(e) =>
+                  onChange={(e: SelectChangeEvent) =>
                     setFormData({ ...formData, subcategory_id: e.target.value })
                   }
-                  disabled={!formData.category_id || !Array.isArray(subcategories)}
+                  disabled={!formData.category_id}
                 >
-                  {formData.category_id && Array.isArray(subcategories) && subcategories.length > 0 ? (
+                  {formData.category_id && subcategories.length > 0 ? (
                     subcategories.map((sub) => (
                       <MenuItem key={sub.id} value={sub.id}>
                         {sub.sub_category_name}
@@ -233,12 +261,44 @@ const SellerProduct = () => {
                   )}
                 </Select>
               </FormControl>
-              <TextField label="Name" size="small" value={formData.product_name} onChange={(e) => setFormData({ ...formData, product_name: e.target.value })} />
-              <TextField label="Description" size="small" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
-              <TextField label="Price" size="small" type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} />
-              <TextField label="Quantity" size="small" type="number" value={formData.quantity} onChange={(e) => setFormData({ ...formData, quantity: e.target.value })} />
 
-              <Button variant="contained" color="success" onClick={handleAdd}>Save</Button>
+              <TextField
+                label="Name"
+                size="small"
+                value={formData.product_name}
+                onChange={(e) =>
+                  setFormData({ ...formData, product_name: e.target.value })
+                }
+              />
+              <TextField
+                label="Description"
+                size="small"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
+              <TextField
+                label="Price"
+                size="small"
+                type="number"
+                value={formData.price}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: Number(e.target.value) })
+                }
+              />
+              <TextField
+                label="Quantity"
+                size="small"
+                type="number"
+                value={formData.quantity}
+                onChange={(e) =>
+                  setFormData({ ...formData, quantity: Number(e.target.value) })
+                }
+              />
+              <Button variant="contained" color="success" onClick={handleAdd}>
+                Save
+              </Button>
             </Box>
           )}
 
@@ -257,7 +317,7 @@ const SellerProduct = () => {
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : filteredList.length === 0 ? (
-            <Typography>No products found.</Typography>
+            <Typography>{searchTerm ? 'No products found.' : 'No products available.'}</Typography>
           ) : (
             <TableContainer component={Paper}>
               <Table>
@@ -276,77 +336,89 @@ const SellerProduct = () => {
                 <TableBody>
                   {filteredList.map((product, index) => {
                     const isEditing = editId === product.id;
-
                     return (
                       <TableRow key={product.id}>
                         <TableCell>{index + 1}</TableCell>
-
                         <TableCell>
                           {isEditing ? (
                             <TextField
                               size="small"
                               value={editData.product_name}
-                              onChange={(e) => setEditData({ ...editData, product_name: e.target.value })}
+                              onChange={(e) =>
+                                setEditData({ ...editData, product_name: e.target.value })
+                              }
                             />
                           ) : (
                             product.product_name
                           )}
                         </TableCell>
-
                         <TableCell>
                           {isEditing ? (
                             <TextField
                               size="small"
                               multiline
-                              value={editData.description}
-                              onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                              value={editData.description || ''}
+                              onChange={(e) =>
+                                setEditData({ ...editData, description: e.target.value })
+                              }
                             />
                           ) : expandedDescriptions[product.id] ? (
                             product.description
                           ) : (
-                            `${product.description.slice(0, 50)}${product.description.length > 50 ? '...' : ''}`
+                            `${product.description?.slice(0, 50)}${product.description && product.description.length > 50 ? '...' : ''}`
                           )}
-
-                          {!isEditing && product.description.length > 50 && (
-                            <Button
-                              onClick={() => toggleDescription(product.id)}
-                              size="small"
-                              sx={{ textTransform: 'none', ml: 1 }}
-                            >
-                              {expandedDescriptions[product.id] ? 'Less' : 'More'}
-                            </Button>
-                          )}
+                          {!isEditing &&
+                            product.description &&
+                            product.description.length > 50 && (
+                              <Button
+                                onClick={() => toggleDescription(product.id)}
+                                size="small"
+                                sx={{ textTransform: 'none', ml: 1 }}
+                              >
+                                {expandedDescriptions[product.id] ? 'Less' : 'More'}
+                              </Button>
+                            )}
                         </TableCell>
-
+                        <TableCell>{isEditing ? (
+                          <TextField
+                            type="number"
+                            size="small"
+                            value={editData.price}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                price: parseFloat(e.target.value) || 0,
+                              })
+                            }
+                          />
+                        ) : (
+                          product.price
+                        )}</TableCell>
+                        <TableCell>{isEditing ? (
+                          <TextField
+                            type="number"
+                            size="small"
+                            value={editData.quantity}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                quantity: parseInt(e.target.value) || 0,
+                              })
+                            }
+                          />
+                        ) : (
+                          product.quantity
+                        )}</TableCell>
                         <TableCell>
-                          {isEditing ? (
-                            <TextField
-                              type="number"
-                              size="small"
-                              value={editData.price}
-                              onChange={(e) => setEditData({ ...editData, price: e.target.value })}
-                            />
-                          ) : (
-                            product.price
-                          )}
+                          {product.createdAt
+                            ? new Date(product.createdAt).toLocaleString()
+                            : '—'}
                         </TableCell>
-
                         <TableCell>
-                          {isEditing ? (
-                            <TextField
-                              type="number"
-                              size="small"
-                              value={editData.quantity}
-                              onChange={(e) => setEditData({ ...editData, quantity: e.target.value })}
-                            />
-                          ) : (
-                            product.quantity
-                          )}
+                          {product.updatedAt
+                            ? new Date(product.updatedAt).toLocaleString()
+                            : '—'}
                         </TableCell>
-
-                        <TableCell>{new Date(product.createdAt).toLocaleString()}</TableCell>
-                        <TableCell>{new Date(product.updatedAt).toLocaleString()}</TableCell>
-
                         <TableCell align="right">
                           {isEditing ? (
                             <>
@@ -404,7 +476,9 @@ const SellerProduct = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
-          <Button variant="contained" color="error" onClick={confirmDelete}>Delete</Button>
+          <Button variant="contained" color="error" onClick={confirmDelete}>
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
 
