@@ -50,8 +50,6 @@ const totalEarnings: number = payments.reduce(
   (sum, p) => sum + (typeof p.amount === 'number' ? p.amount : parseFloat(p.amount ?? '0')),
   0
 );
-console.log(totalEarnings);
-
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
