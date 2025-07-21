@@ -35,7 +35,6 @@ const SellerReview: React.FC = () => {
   const [deleting, setDeleting] = useState(false);
 
   const {
-    fetchSellerProducts,
     fetchSellerReviews,
     deleteSellerReview,
     sellerProducts,
@@ -43,7 +42,6 @@ const SellerReview: React.FC = () => {
   } = useSellerProduct();
 
   useEffect(() => {
-    // fetchSellerProducts();
     fetchSellerReviews();
   }, []);
 

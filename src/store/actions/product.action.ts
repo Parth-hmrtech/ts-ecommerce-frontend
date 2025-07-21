@@ -20,7 +20,7 @@ const fetchProductsAction = createAsyncThunk<APISuccessResponse, void>(
         method: 'GET',
         url: '/buyer/products',
       });
-
+      
       return thunkAPI.fulfillWithValue(response?.data?.data || []);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(

@@ -1,5 +1,5 @@
 import React from 'react';
-import SellerProductView from '@/pages/seller/sellerProduct';
+import SellerProductView from '@/views/seller/SellerProduct';
 
 const SellerProduct: React.FC = () => {
   return <SellerProductView />;

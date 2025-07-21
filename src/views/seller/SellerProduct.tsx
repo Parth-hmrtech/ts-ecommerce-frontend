@@ -37,7 +37,6 @@ import type { ICategory, ISubCategory } from '@/types/category.types';
 
 const SellerProduct: React.FC = () => {
   const {
-    fetchSellerProducts,
     addSellerProduct,
     deleteSellerProduct,
     updateSellerProduct,
