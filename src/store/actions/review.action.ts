@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IReview, IReviewAdd, IReviewUpdatePayload } from '@/types/review.types';
+import type {  IReviewAdd, IReviewUpdatePayload } from '@/types/review.types';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('access_token');

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { ICheckoutPaymentPayload, IPayment, IVerifyPaymentPayload  } from '@/types/payment.types';
+import type { ICheckoutPaymentPayload, IVerifyPaymentPayload  } from '@/types/payment.types';
 
 const BASE_URL = '/buyer/payments';
 
