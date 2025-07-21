@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import type { ChangeEvent } from 'react';
 import {
   Box, Typography, TextField, Button, Paper, Alert, InputAdornment,
   IconButton, Divider, Avatar, Stack
@@ -12,12 +13,25 @@ import Sidebar from '@/components/common/Sidebar';
 import Footer from '@/components/common/Footer';
 import useUserProfile from '@/hooks/useUser';
 
-const SellerProfile = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+interface IFormData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  image: File | null;
+  image_url: string;
+}
+
+interface IErrors {
+  [key: string]: string;
+}
+
+const SellerProfile: React.FC = () => {
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   const userId = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem('user'))?.id || null;
+      return JSON.parse(localStorage.getItem('user') || '{}')?.id || null;
     } catch {
       return null;
     }
@@ -29,11 +43,9 @@ const SellerProfile = () => {
     updateUserProfile,
     resetUserPassword,
     loading,
-    alertType,
-    message,
   } = useUserProfile();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<IFormData>({
     first_name: '',
     last_name: '',
     email: '',
@@ -41,25 +53,25 @@ const SellerProfile = () => {
     image: null,
     image_url: '',
   });
-
-  const [formErrors, setFormErrors] = useState({});
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [passwordErrors, setPasswordErrors] = useState({});
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [resetting, setResetting] = useState(false);
-  const [passwordResetMessage, setPasswordResetMessage] = useState('');
-  const [passwordResetSeverity, setPasswordResetSeverity] = useState('error');
-  const [updateMessage, setUpdateMessage] = useState('');
-  const [updateAlertType, setUpdateAlertType] = useState('success');
+  
+  const [formErrors, setFormErrors] = useState<IErrors>({});
+  const [oldPassword, setOldPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [passwordErrors, setPasswordErrors] = useState<IErrors>({});
+  const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
+  const [resetting, setResetting] = useState<boolean>(false);
+  const [passwordResetMessage, setPasswordResetMessage] = useState<string>('');
+  const [passwordResetSeverity, setPasswordResetSeverity] = useState<'error' | 'success' | 'warning'>('error');
+  const [updateMessage, setUpdateMessage] = useState<string>('');
+  const [updateAlertType, setUpdateAlertType] = useState<'error' | 'success' | 'warning'>('success');
 
   useEffect(() => {
-    if (userId) fetchUserProfile(userId);
+    if (userId) fetchUserProfile();
   }, [userId]);
 
   useEffect(() => {
-    const user = profile?.user;
+    const user = profile;
     if (user) {
       const { first_name, last_name, email, phone_number, image_url } = user;
       setFormData({
@@ -70,13 +82,12 @@ const SellerProfile = () => {
         image: null,
         image_url: image_url || '',
       });
-
       localStorage.setItem('user', JSON.stringify(user));
     }
   }, [profile]);
 
-  const validateForm = () => {
-    const errors = {};
+  const validateForm = (): boolean => {
+    const errors: IErrors = {};
     if (!formData.first_name.trim()) errors.first_name = 'First name is required';
     if (!formData.last_name.trim()) errors.last_name = 'Last name is required';
     if (!formData.email.trim()) {
@@ -97,17 +108,17 @@ const SellerProfile = () => {
       if (key === 'image' && value instanceof File) {
         data.append('image', value);
       } else if (key !== 'image_url') {
-        data.append(key, value);
+        data.append(key, value as string);
       }
     });
 
     try {
       const res = await updateUserProfile({ id: userId, data }).unwrap();
-      fetchUserProfile(userId);
+      fetchUserProfile();
       const msg = res?.data?.message || res?.message;
       setUpdateAlertType('success');
       setUpdateMessage(msg);
-    } catch (err) {
+    } catch (err: any) {
       const msg = err?.response?.data?.message || err?.message;
       setUpdateAlertType('error');
       setUpdateMessage(msg);
@@ -116,8 +127,8 @@ const SellerProfile = () => {
     }
   };
 
-  const validatePassword = () => {
-    const errors = {};
+  const validatePassword = (): boolean => {
+    const errors: IErrors = {};
     if (!oldPassword) errors.oldPassword = 'Old password required';
     if (!newPassword) {
       errors.newPassword = 'New password required';
@@ -143,7 +154,7 @@ const SellerProfile = () => {
         setOldPassword('');
         setNewPassword('');
       }
-    } catch (err) {
+    } catch (err: any) {
       const msg = err?.response?.data?.message;
       setPasswordResetSeverity('error');
       setPasswordResetMessage(msg);
@@ -153,7 +164,7 @@ const SellerProfile = () => {
     }
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setFormData((prev) => ({
@@ -164,7 +175,7 @@ const SellerProfile = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setFormErrors((prev) => ({ ...prev, [name]: '' }));
@@ -177,10 +188,9 @@ const SellerProfile = () => {
         <Sidebar open={sidebarOpen} />
         <Box sx={{ flexGrow: 1, p: 3 }}>
           <Paper elevation={3} sx={{ p: 4, borderRadius: 3, maxWidth: 1200, mx: 'auto', display: 'flex', flexDirection: 'row', gap: 4 }}>
-            {/* Profile Info */}
             <Box component={Paper} elevation={2} sx={{ p: 3, borderRadius: 3, flex: 1, bgcolor: '#fafafa' }}>
               <Stack direction="row" spacing={2} alignItems="center">
-                <Avatar src={profile?.user?.image_url} sx={{ width: 80, height: 80 }} />
+                <Avatar src={profile?.image_url} sx={{ width: 80, height: 80 }} />
                 <Typography variant="h6" fontWeight="bold">
                   <Person fontSize="small" /> Seller Info
                 </Typography>
@@ -188,12 +198,11 @@ const SellerProfile = () => {
               <Divider sx={{ my: 2 }} />
               {['first_name', 'last_name', 'email', 'phone_number'].map((field) => (
                 <Typography key={field} sx={{ mt: 1 }}>
-                  <strong>{field.replace('_', ' ').toUpperCase()}:</strong> {profile?.user?.[field] || '—'}
+                  <strong>{field.replace('_', ' ').toUpperCase()}:</strong> {profile?.[field] || '—'}
                 </Typography>
               ))}
             </Box>
 
-            {/* Edit Form */}
             <Box sx={{ flex: 2 }}>
               <Typography variant="h6"><Edit color="primary" /> Edit Profile</Typography>
               <Divider sx={{ my: 2 }} />

@@ -112,7 +112,6 @@ const fetchAllProductsAction = createAsyncThunk<APISuccessResponse, void>(
         url: '/seller/products',
         headers: getAuthHeaders(),
       });
-      console.log(response);
       
       return thunkAPI.fulfillWithValue(response.data?.data || []);
     } catch (error: any) {

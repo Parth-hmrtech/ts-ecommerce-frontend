@@ -43,7 +43,7 @@ const userSlice = createSlice({
     });
     builder.addCase(fetchUserProfileAction.fulfilled, (state, { payload }: any) => {
       state.loading = '';
-      state.profile = payload.data ?? payload;
+      state.profile = payload;      
       state.alertType = 'success';
       state.message = payload.message ?? '';
       state.error = false;

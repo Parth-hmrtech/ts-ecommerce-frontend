@@ -18,3 +18,9 @@ export interface IPayment {
   };
   [key: string]: any;
 }
+export interface ISellerPaymentState {
+  sellerPayments: IPayment[];
+  sellerEarnings: number;
+  loading: boolean;
+  error: string | null;
+}

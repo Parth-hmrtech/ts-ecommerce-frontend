@@ -18,9 +18,9 @@ import SellerSubCategory from "@/pages/seller/sellerSubCategory";
 import SellerProducts from "@/pages/seller/sellerProduct";
 import SellerOrderList from "@/pages/seller/sellerOrder";
 import SellerProductImages from "@/pages/seller/sellerProductUploadImage";
-// import SellerPayments from "../views/seller/SellerPayment";
-// import SellerReview from "../views/seller/SellerReview";
-// import SellerProfile from "../views/seller/SellerProfile";
+import SellerPayments from "@/pages/seller/sellerPayment";
+import SellerReview from "@/pages/seller/sellerReview";
+import SellerProfile from "@/pages/seller/sellerProfile";
 
 import ProtectedRoute from '@/utils/ProtectedRoute';
 
@@ -74,7 +74,6 @@ const AppRoutes = createBrowserRouter([
   },
   
 
-  // Seller routes (disabled for now)
   
   {
     element: <ProtectedRoute requiredRole="seller" />,
@@ -103,18 +102,18 @@ const AppRoutes = createBrowserRouter([
         path: "/seller-dashboard/orders",
         element: <SellerOrderList />,
       },
-      // {
-      //   path: "/seller-dashboard/payments",
-      //   element: <SellerPayments />,
-      // },
-      // {
-      //   path: "/seller-dashboard/reviews",
-      //   element: <SellerReview />,
-      // },
-      // {
-      //   path: "/seller-dashboard/profile",
-      //   element: <SellerProfile />,
-      // },
+      {
+        path: "/seller-dashboard/payments",
+        element: <SellerPayments />,
+      },
+      {
+        path: "/seller-dashboard/reviews",
+        element: <SellerReview />,
+      },
+      {
+        path: "/seller-dashboard/profile",
+        element: <SellerProfile />,
+      },
     ],
   },
   

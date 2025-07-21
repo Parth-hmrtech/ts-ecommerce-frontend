@@ -54,10 +54,10 @@ const useProductManager = (productId?: string) => {
     cart = [],
   } = useSelector((state: RootState) => state.cart || {});
 
-  const {
-    buyerReviews = [],
-    sellerReviews = [],
-  } = useSelector((state: RootState) => state.review || {});
+const {
+  buyerReviews = [],
+  sellerReviews = [],
+} = useSelector((state: RootState) => state.review || {});
 
   const {
     list: sellerCategories = [],

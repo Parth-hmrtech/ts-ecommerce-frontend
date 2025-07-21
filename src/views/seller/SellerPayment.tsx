@@ -13,25 +13,27 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import Sidebar from '@/components/common/Sidebar';
 
 import useSellerPayment from '@/hooks/usePayment';
 
-const SellerPayments = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const navigate = useNavigate();
 
-  const {
-    fetchSellerPayments,
-    fetchSellerEarnings,
-    sellerPayments
-  } = useSellerPayment();
-    const payments = sellerPayments.sellerPayments;
-    const earnings = sellerPayments.sellerEarnings
+const SellerPayments: React.FC = () => {
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+
+const {
+  fetchSellerPayments,
+  fetchSellerEarnings,
+  sellerPayments
+} = useSellerPayment();
+
+
+  const payments = sellerPayments.sellerPayments || [];
+  const loading = sellerPayments.loading || false;
+  const error = sellerPayments.error || null;
+
   useEffect(() => {
     fetchSellerPayments();
     fetchSellerEarnings();
@@ -40,16 +42,16 @@ const SellerPayments = () => {
   const handleToggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
-  const loading = sellerPayments.loading || false;
-  const error = sellerPayments.error || false;
 
   const uniqueOrderIds = new Set(payments.map((p) => p.order_id));
   const totalOrders = uniqueOrderIds.size;
 
-  const totalEarnings = payments.reduce(
-    (sum, p) => sum + parseFloat(p.amount || 0),
-    0
-  );
+const totalEarnings: number = payments.reduce(
+  (sum, p) => sum + (typeof p.amount === 'number' ? p.amount : parseFloat(p.amount ?? '0')),
+  0
+);
+console.log(totalEarnings);
+
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>

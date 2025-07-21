@@ -7,8 +7,10 @@ export interface IReview {
   rating?: number;
   comment?: string;
   createdAt?: string;
-  created_at?: string;
+  created_at: string | Date;
+  updated_at: string | Date;
   updatedAt?: string;
+  loading:string;
 }
 export type IReviewAdd = {
   order_id: string;
@@ -18,3 +20,8 @@ export type IReviewAdd = {
   rating: number;
   comment: string;
 };
+export interface ISellerReviewState {
+  loading: boolean;
+  error: string | null;
+  reviews: IReview[];
+}

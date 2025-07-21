@@ -1,5 +1,5 @@
 import React from 'react';
-import SellerPaymentView from '@/pages/seller/sellerPayment';
+import SellerPaymentView from '@/views/seller/SellerPayment';
 
 const SellerPayment: React.FC = () => {
   return <SellerPaymentView />;
