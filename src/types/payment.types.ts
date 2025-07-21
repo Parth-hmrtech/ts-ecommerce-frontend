@@ -32,3 +32,15 @@ export interface IEarnings {
   total_earnings: number;
   total_orders: number;
 }
+
+export interface ICheckoutPaymentPayload {
+  order_id: string;
+  seller_id: string;
+  amount: number;
+  payment_method: string;
+  transaction_id: string;
+}
+export interface IVerifyPaymentPayload {
+  status: 'success' | 'failed';
+  transaction_id: string;
+}

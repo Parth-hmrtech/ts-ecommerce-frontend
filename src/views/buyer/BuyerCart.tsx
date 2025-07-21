@@ -26,7 +26,6 @@ const BuyerCart: React.FC = () => {
 
   const {
     cart,
-    updatedCart,
     loading,
     error,
     products,

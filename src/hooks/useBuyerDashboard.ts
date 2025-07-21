@@ -9,7 +9,7 @@ import {
   deleteBuyerCartAction,
 } from '@/store/actions/cart.action';
 import type { ICartAdd, ICartItem, ICartUpdate } from '@/types/cart.types';
-import type { IProduct } from '@/types/product.types'; // Make sure this exists
+import type { IProduct } from '@/types/product.types'; 
 
 const useBuyerDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();

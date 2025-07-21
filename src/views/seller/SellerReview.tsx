@@ -25,7 +25,6 @@ import Footer from '@/components/common/Footer';
 import Sidebar from '@/components/common/Sidebar';
 
 import useSellerProduct from '@/hooks/useProduct';
-// import type { IProduct } from '@/types/product.types';
 import type { IReview } from '@/types/review.types';
 
 const SellerReview: React.FC = () => {

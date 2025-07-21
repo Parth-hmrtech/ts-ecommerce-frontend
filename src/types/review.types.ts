@@ -25,3 +25,8 @@ export interface ISellerReviewState {
   error: string | null;
   reviews: IReview[];
 }
+export interface IReviewUpdatePayload {
+  id: string;
+  rating: number;
+  comment: string;
+}

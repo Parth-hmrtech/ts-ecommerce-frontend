@@ -3,8 +3,8 @@ import { useEffect, useCallback } from 'react';
 
 import type { RootState, AppDispatch } from '@/store';
 import type { IOrder,IOrderAddressUpdate } from '@/types/order.types';
-import type { IReview ,IReviewAdd } from '@/types/review.types';
-import type { IPayment } from '@/types/payment.types';
+import type { IReview ,IReviewAdd, IReviewUpdatePayload } from '@/types/review.types';
+import type { ICheckoutPaymentPayload, IVerifyPaymentPayload } from '@/types/payment.types';
 
 import {
   fetchBuyerOrdersAction,
@@ -59,11 +59,11 @@ const useOrderManager = (role: Role = 'buyer') => {
     dispatch(buyerCheckPaymentStatusAction());
   }, [dispatch]);
 
-  const checkoutPayment = useCallback((payload: IPayment) => {
+  const checkoutPayment = useCallback((payload: ICheckoutPaymentPayload) => {
     dispatch(buyerCheckoutPaymentAction(payload));
   }, [dispatch]);
 
-  const verifyPayment = useCallback((payload: IPayment) => {
+  const verifyPayment = useCallback((payload: IVerifyPaymentPayload) => {
     dispatch(buyerVerifyPaymentAction(payload));
   }, [dispatch]);
 
@@ -71,7 +71,7 @@ const useOrderManager = (role: Role = 'buyer') => {
     dispatch(addBuyerReviewAction(payload));
   }, [dispatch]);
 
-  const updateReview = useCallback((payload: IReview) => {
+  const updateReview = useCallback((payload: IReviewUpdatePayload) => {
     dispatch(updateBuyerReviewAction(payload));
   }, [dispatch]);
 
@@ -111,12 +111,10 @@ const useOrderManager = (role: Role = 'buyer') => {
   return {
     role,
 
-    // Common
     products,
     buyerCheckPayments,
     buyerReviews,
 
-    // Buyer
     orders: order.buyerOrders || [],
     loading: order.loading || false,
     error: order.error || null,
@@ -132,7 +130,6 @@ const useOrderManager = (role: Role = 'buyer') => {
     deleteReview,
     fetchReviewsByProductId,
 
-    // Seller
     sellerOrders: order.sellerOrders || [],
     sellerProducts: product.products || [],
     fetchSellerOrders,

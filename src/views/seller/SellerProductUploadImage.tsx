@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Typography,
@@ -93,7 +93,6 @@ const sliderSettings = {
 
 const SellerProductImages: React.FC = () => {
     const {
-        fetchSellerProducts,
         uploadProductImage,
         sellerProducts,
         sellerLoading,

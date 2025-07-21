@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '@/libs/axios';
 import type { APISuccessResponse } from '@/libs/axios';
-import type { IPayment  } from '@/types/payment.types';
+import type { ICheckoutPaymentPayload, IPayment, IVerifyPaymentPayload  } from '@/types/payment.types';
 
 const BASE_URL = '/buyer/payments';
 
@@ -12,7 +12,7 @@ const getTokenHeader = () => {
   };
 };
 
-const buyerCheckoutPaymentAction = createAsyncThunk<APISuccessResponse, IPayment>(
+const buyerCheckoutPaymentAction = createAsyncThunk<APISuccessResponse, ICheckoutPaymentPayload>(
   'buyerPayment/checkout',
   async ({ order_id, seller_id, amount, payment_method, transaction_id }, thunkAPI) => {
     try {
@@ -35,7 +35,7 @@ const buyerCheckoutPaymentAction = createAsyncThunk<APISuccessResponse, IPayment
   }
 );
 
-const buyerVerifyPaymentAction = createAsyncThunk<APISuccessResponse, IPayment>(
+const buyerVerifyPaymentAction = createAsyncThunk<APISuccessResponse, IVerifyPaymentPayload>(
   'buyerPayment/verify',
   async ({ status, transaction_id }, thunkAPI) => {
     try {

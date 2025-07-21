@@ -37,7 +37,7 @@ import {
 
 import type { ICartAdd, ICartUpdate } from '@/types/cart.types';
 import type { IAddProduct, IProduct, IWishlistAdd } from '@/types/product.types';
-import type { IReview } from '@/types/review.types';
+import type { IReviewUpdatePayload } from '@/types/review.types';
 
 const useProductManager = (productId?: string) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -109,7 +109,7 @@ const {
     await dispatch(fetchBuyerWishlistAction());
   };
 
-  const updateReview = async (payload: IReview) => {
+  const updateReview = async (payload: IReviewUpdatePayload) => {
     return await dispatch(updateBuyerReviewAction(payload));
   };
 
